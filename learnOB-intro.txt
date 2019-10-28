@@ -1,0 +1,92 @@
+# Learn how to use Open Banking UK standard
+
+## Introduction
+
+Open Banking is a set of APIs, to consume bank data, but not any  kind of data: the user data. As a developer, you will be able to offer financial services to your users, by directly connecting to their bank and accessing their financial data.
+
+It's really a game changer in the financial industry, as developers have now a new source of innovation, a simple set of secured APIs, allowing them to focus on their ideas that those APIs inspire them.
+
+As a developer, I really like Open Banking for what it represents: a step forward Open APIs. The fact that the financial industry is showing the way, is for me a strong message. We are now heading to an API Colorado, where each industry would offers secured APIs. An unlimited source of innovation, empowered to us, developers. Is that not ideal?
+
+Before talking about Open APIs, let's talk first with what we have today in our plate: Open Banking.
+
+By a set of articles, we are going to see how works Open Banking but more in particular, Open Banking UK. It's the main standard today that defines those Open Banking APIs.
+Security is obviously in the center of this standard, allowing you to access the user financial data, with his consent, without any security risk.
+Open Banking UK may sounds complex at the first approach but trust me, it's not. It's just a lot to learn in one go, and this is what those articles will help you with: We are going to learn step by step, on how to use Open Banking UK.
+
+## Le menu
+
+### Starters
+
+#### Overview of the Open Banking APIs.
+
+It's good to start by selling you the APIs. Making you dream a bit so you stick with me for this set of articles!
+We are going to do an over view of the APIs, to see what they have to offer to you.
+If you are just looking to see the potential of Open Banking, as a source of inspiration, it's the article for you.
+
+#### Open Banking trusting model and how to register yourself
+
+The first things to start with, is understanding the trusting model. By trusting model, I mean how all those different parties are going to trust each others.
+Because yes, if you thought you could just show up and make payment, access account data, without identifying you to the banks, I am sorry to disappoint you!
+It's not big deal, it was expected if you think of the security aspect.
+
+
+### The mains
+
+#### ForgeRock Open Banking Reference Implementation
+
+In order to discover the APIs, we will use the model bank offered by ForgeRock. It's a sandbox environment that everyone can access and play with.
+It is security conformant and provide all the Open Banking APIs available today. It would be a perfect for us for our Open Banking learning articles.
+
+#### On-boarding your application to the bank
+
+We will then talk about how to on-board. Even if you are part of the Open Banking club from the previous article now, you still need to do this on-boarding step.
+Basically at this point, the bank needs you to have an identity in their system, so they can verify you are authorised to use their APIs in the future. 
+In Open Banking, it's called on-boarding. You basically need to register your application, simple as that.
+
+#### The security flow
+Once on-board, you are free to start using the APIs! It's now a good time to start talking about the security around them.
+Security is no doubt what would slow you down in your APIs consumption adventure. 
+Before saying it's too complex, and your usual API token you have the habits of using would not be good enough here. Let's remember that it's not just you and the bank, there is also the user. That's like a bummer for you at this point. It's what makes those APIs so attractive in one way, but it's also what make them more complex to consume from a security point of view.
+The next article would be around understanding this security. 
+
+#### Get the user transactions using the Open Banking APIs
+
+Once you understand the reason for all this security and how it works in theory, it's time to put that in practice.
+We are going to access the account APIs of the user, in particular the transactions APIs. It's one of the most popular API enabled by Open Banking and it's maybe why you are here right now!
+
+#### Making a payment using Open Banking
+
+Another appealing APIs are the payments APIs. We are going to see the different payments available to you, like international payment, and how they works.
+It's slightly different than the account APIs, just because the idea is not to access a resource but more to trigger an action, hear a payment.
+
+### The deserts
+
+#### Event notifications
+
+One thing you will notice once you start to look at payments more seriously, is that you need a way to be notified about the payment completion.
+Pulling VS Pushing, here is the debate. Today, the Open Banking APIs offers both, meaning you can either:
+* Pull the bank about a specific payment and ask them the status of it
+* Receive a notification from the bank, to notify you that the payment has a new status
+
+Pull is probably the most commonly implemented by the bank at this stage, but I am sure as a developer like me, you are already not liking it. Pulling is more work for the developer consuming the API, it's better to push that work on the bank side isn't it?
+We are going to see the event notification APIs, which when available by the bank, allows you to be notified by your payments.
+
+
+#### Confirmation of funds
+
+The last APIs defined by Open Banking, is called confirmation of funds. Not my favourite APIs, probably why I am putting at last.
+Although it does offer you a very specific functionality, which may be spot on for your business.
+Those APIs are about verifying that the user has enough funding.
+You can do it during a payment, which is handy, or you can just do it any point of time.
+
+
+
+## Conclusion
+
+This is where our journey ends for this set of article around learning how to use Open Banking APIs.
+
+
+
+
+
