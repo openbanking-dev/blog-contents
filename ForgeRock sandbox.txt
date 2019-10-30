@@ -80,6 +80,18 @@ https://as.aspsp.ob.forgerock.financial/oauth2/.well-known/openid-configuration
 A bit more atypic and less of a use for us as developer, the ForgeRock offers an Open Banking analytics. It's basically an application, in the same line than google analytics, dedicated in monitoring Open Banking KPIs. 
 ForgeRock hasn't provide any report about the usage of their sandbox yet, despite it would be interesting for the community to get an idea of how popular Open Banking is getting by looking at the statistic of the sandbox.
 
+### ForgeRock Open Banking Postman collection
+
+We do provide a postman collection to play with. It's actually would be our base tool for this tutorial.
+It's available here:
+https://postman.ob.forgerock.financial
+
+On the top right, there is a button that should automatically launch postman and download the collection/environment into it.
+
+We choose postman as it is language agnostic, and the tools to go for playing with APIs those days.
+
+You can already download it now if you are interested to follow this tutorial.
+
 
 ## Conclusion
 

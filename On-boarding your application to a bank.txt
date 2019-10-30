@@ -4,20 +4,18 @@ For the moment, you are an anonymous developer to the eco-system. As we mentione
 For the purpose of the learning curve, we are going to use the ForgeRock model bank and they do have an Open Banking directory dedicated.
 We are going to use it to join the circle of trust for the model bank.
 
-## Create an account
+## Register in the ForgeRock Open Banking directory
+
+### Create an account
 Go to https://directory.ob.forgerock.financial/ and register a new developer account.
 Once login, you would see a dashboard, with your organisation and the list of your software statements.
 
-## Edit your organisation
+### Edit your organisation
 You can edit your organisation to reflect a bit more who you are. It's going to be used during the Open Banking flow when the user authorise the request.
 
-## Create a software statement
+### Create a software statement
 A software statement is another word to say application. You can choose to have one application register and use it for everything, or you can choose to create multiples applications, up to you.
 Start by clicking on `Create a new software statement`. 
-You can complete the entire form but if you feel a bit lazy like me, just complete the essential:
-* Name: It will displayed in the consent screen, it's nice to show a friendly name than a blank
-* redirect uris: we don't want to host an app for exploring Open Banking, we are going to use google. Put https://google.com
-* logo: It's also display in the consent. You can use ours for the exercise if you like. 
 
 
 You will see on the top that there are a few tabs:
@@ -27,3 +25,54 @@ You will see on the top that there are a few tabs:
 * On Boarding: the directory can onboard for you to the ForgeRock bank. Although, we kind of want how the on-boarding works so we are going to do that manually.
 
 Cool fact: the directory also offers APIs, we will be able to do the same things we did in the UI but via the APIs. Very handy especially for generating a new SSA.
+
+#### General
+
+You can complete the entire form but if you feel a bit lazy like me, just complete the essential:
+* Name: It will displayed in the consent screen, it's nice to show a friendly name than a blank
+* redirect uris: we don't want to host an app for exploring Open Banking, we are going to use google. Put https://google.com
+* logo: It's also display in the consent. You can use ours for the exercise if you like. 
+
+
+#### Transport/Signing/Encryption keys
+
+The way you are going to authenticate, when doing a call to an API, is via MATLS. It means that server is going to present a certificates, called server certificate (basically what is httpS for) but you are going to present one too, which we call client certificate.
+Instead of naming them server and client certificates, the directory is offering you transport certificate. It's because the directory doesn't care if you are a server or a client, so from its point of view, they are TLS certificates, which we also call transport certificate.
+All of that was just to say to download your current transport key!
+A certificate is the representation of an asymmetric key. Asymmetric imply a public and a private key.
+You will need to download the .pem and .key, in order to use this key in the future.
+
+Note that you can also download your signing key the same way. In this tutorial, we are going to use the JWKMS APIs, which would allow us to use this signing key indirectly, by authenticating with our transport certificate. 
+This means you don't need to download your signing key to follow this tutorial.
+
+#### Software Statement Assertions
+
+You can try generating an SSA via the UI. It's a good way to explore.
+For our tutorial, we will do the same but via the directory API directly. No need to download an SSA now.
+
+#### On-boarding
+
+We are going to use the API, to show you how it works. You can park this tab for the moment.
+
+## Register your application to the bank
+
+You are now ready to register your application to the bank. As a reminder, you are registered in the directory and recognised now as part of the Open Banking eco-system for the sandbox, but the Forgerock mock bank itself doesn't know you yet.
+
+Under the cover, Open Banking uses OIDC and you are not registered as an OIDC client in the bank.
+
+### Setting up Postman
+
+Lets do that now:
+
+* Download postman and our collection. See X
+* Setup your transport certificate into postman as your client certificate
+* Test MATLS
+
+### Dynamic registration
+
+The nice things with Open Banking, is once you managed to be register into the directory, you can do a dynamic registration to the bank. What this means is that there isn't any manual process involved, no approval requires etc.
+By calling the dynamic registration APIs the right way, you directly get your OIDC clients register to the bank and you can start using the Open Banking APIs.
+
+Some banks are still not on top of the art on that subject and still offer manual registration. Unfortunately for those, you would have to follow their process, which would be unique for each banks. No cool but lets hope they move on from that and adopt dynamic registration.
+For this tutorial, we will show you dynamic registration 
+
