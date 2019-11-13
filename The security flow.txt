@@ -1,13 +1,17 @@
 # The security flow
 
-If you are not interested yet to read about the security aspect of Open Banking, you may want to skip that article and go directly to the next one.
+*This article is part of a set of tutorial about Open Banking UK, although, they are all written to be read as a standalone article. If you are interested in learning about Open Banking UK from the beginning, you may want to start by our intro article.*
+
+*If you wish to execute the request at the same than the article, please note that it assumes you are already onboard. If it is not your case, please follow the article X*
+
+If you are not interested yet about the security aspect of Open Banking, you may want to skip that article and go directly to the next one.
 In this article, we will cover the security theory behind Open Banking, which will help you understand where the apparent complexity comes from.
 
 ## The goal
 
-What we want to achieve, is having three different parties, communicating together in a secured way without trusting each others fully.
-Basically, as a developer, you want to access the user data stored on a bank. 
-The main difference with APIs you are used to consumed, are due to the above. An API key would not work, just because it's not your own data you are accessing. What we want is to get a token, that contains inside somehow the fact that the user agree to share his data.
+What we want to achieve, is having three different parties, communicating to each others, in a secured way.
+Basically, as a **developer**, you want to access the **user** data stored in his **bank**. 
+The main security difference with APIs you have used so far, is probably due to the above. An API key would not work here, just because it's not your own data you are accessing. What we want is to get a token, that contains inside somehow the fact that the user agreed to share his data.
 We are going to decompose the flow in four parts:
 * Consent preparation
 * Authentication and Authorisation of the user
@@ -20,10 +24,11 @@ For simplicity, we are going to take the account and transactions APIs example. 
 
 The first step is to prepare the consent access. Only you and the bank is involved in that process. This consist of creating a consent object into the bank. Inside this consent, you will put the permissions you wish to access and some optional informations like the expiration of the consent.
 
-The bank is protecting their endpoints with OAuth2, meaning you will need an access token to create the consent object.
-There are different grant flows in OAuth2, we are going to see two of them in Open Banking. The one that interest us for now is the client credential grant flow.
-If you are familiar with this standard, as a developer, you are considered as an OAuth2 client and as you want to create a resources that you will own, you need to use the client credential grant flow.
-The client credential flow will be covered in a separate articles and won't be details here.
+The bank is protecting their endpoints with OAuth2, even the consent creation endpoint, meaning you will need an access token to create the consent object.
+There are different grant flows in OAuth2, we are going to see two of them today. The one that interest us for the consent creation is the client credential grant flow.
+If you are familiar with this standard, as a developer, you are the OAuth2 client and you want to create a resources that you will own. For that, you need to use the client credential grant flow.
+This flow will not be covered in details in this tutorial, we will concentrate on showing how to use it.
+
 To create the access token:
 
 ```
@@ -43,7 +48,9 @@ As a response:
 }
 ```
 
-You can then use it to create the account access consent:
+It uses the `tls_client_auth` auth method to authenticate yourself to the bank, via your client certificate. It is why only you can get this access token.
+
+You can now use it to create the account access consent:
 
 
 ```
@@ -118,17 +125,17 @@ Although, the bank added a few new one in the response, that are going to be imp
 
 ## Authentication and Authorisation of the user
 
-You need to get this consent agreed by the user. You may be surprise to notice that actually, your consent is not bind to any user yet.
-I personally find quite nice that the consent is generic and you don't need to share any form of identification of the user to the bank. It means that as a user, I don't need to share my bank user identity with the Fintech, which is nice.
-For getting the authorisation of the user, we are going to use an OIDC grant flow, called the hybrid flow.
-Although, between us, if you are familiar with OAuth2, you won't be lost: the hybrid is very similar to the authorisation code grant flow.
-For the one that doesn't know OIDC, it stands for OpenID connect. It's a standard dedicated to identity, like the things that happen when you login to a website using your facebook or google account for example.
-We use OIDC, as it's actually a layer on top of OAuth2. We are not really going to use the identity layer added by OIDC, but just use it for additional security check. We will come back on that.
-How it works, is based on a redirection model. This means you are going to redirect the user to the bank, with some informations attached.
-The challenge is that you want to tell the bank why the user is redirecting to them, but you are not in touch with the bank directly.
-The trick is to add a GET parameter to the URL where the user will be redirected, that contains the instruction for the bank.
+Now, you need to get this consent agreed by the user. You may be surprise to notice that actually, your consent is not bind to any user particular yet.
+I personally find it quite nice that the consent is generic and you don't need to share any form of identification of the user to the bank. It means that as a user, I don't need to share my bank user identity with the developer, which is nice.
+Time to use the second OIDC grant flow: for getting the authorisation of the user, we are going to use the hybrid flow.
+*If you are familiar with OAuth2 and don't know the hybrid flow yet: the hybrid is very similar to the authorisation code grant flow, it just returns an ID token with the authorisation code.*
+If you don't know what is OIDC, it stands for OpenID connect. It's a standard dedicated to identity, like the things that happen when you login to a website using your facebook or google account for example.
+OIDC is like a layer on top of OAuth2. For Open Banking, We are not really going to use the identity layer added by OIDC, but just use it for additional security check it provides. We will come back on that.
+The hybrid flow is based on a redirection model. This means you are going to redirect the user to the bank, with some informations attached to it and once the bank has finish its part, it redirects the user back to you.
+The challenge is to attach a context to this redirection, so the bank can load the right consent, but you are not in touch with the bank directly unfortunately.
+The trick is to add a GET parameter to the URL to which the user will be redirected. This parameter will contains the instruction for the bank.
 We all played with the GET parameters and we know that as a user , it's super easy to change them.
-In our case, for security reason, we want to prevent the user to do that. Therefore on top of putting the information in a GET parameter, we are going to sign it. This way, if the user changes some values, the signature will be compromised and the bank would be able to tell something wrong is happening.
+In our case, for security reason, we want to prevent the user to do that. Therefore on top of putting the information in a GET parameter, we are going to sign it. This way, if the user changes some values, the signature will be compromised and the bank would be able to tell something wrong happened.
 
 The information you send as a GET parameter, is called the `request parameter`. The format is standardise by OIDC, it's a JSON with the following claims:
 
@@ -165,17 +172,17 @@ The information you send as a GET parameter, is called the `request parameter`. 
 ```
 
 Lets details the main claims:
-* `aud`: like when you write a letter, you are going to say who is the audience of this message. In this case, it is the bank. To find what is the official audience value corresponding to the bank, remember about the AS discovery. In there, the bank told us what was its referenced name, the `issuer` value. That this value we are going to use.
+* `aud`: like when you write a letter, you are going to say who is the audience of this message. In this case, it is the bank. To find what is the official audience value corresponding to the bank, remember about the AS discovery. In there, the bank told us their `issuer` value. That this value we are going to use.
 * `iss`: This message is signed by us, so we are going to put our official name. The standard is helping us there and telling us to use our OIDC client ID.
 * `response_type`: It's a way in OIDC to specify the kind of response you want and therefore which kind of grant flow you are expecting to happen. By saying `code id_token`, we are requesting the hybrid flow.
 * `scope`: It's the kind of scope we are going to request authorisation from the user. `openid` scope is a way to tell the bank we want to use OIDC, and `accounts` to tell the scope of this request is to access the accounts and transactions APIs.
-* `redirect_uri`: It's the callback URI where we expect the user to return, once his part is completed. We use google in our example to avoid hosting a service but for in a real scenario, it would be an URI from your web applications.
-* `state` and `nonce` serves the same purpose for us here: having a reference to the request. It's important as once the user is redirected to the bank, you will be waiting for a callback. We are exploring one request but imagine you will do a lot of requests in parallel. As it's an asynchronous process, you will need a way to bind the callback to a previous request you made. As `state` and `nonce` are identical, I personally recommend putting the same value in both. Depending of how you persisted the consent ID, you probably already have an ID that could play the role of state. If not, a common way is to store the current state of your application before doing the redirection, and use the state id as a value for `state`.
+* `redirect_uri`: It's the callback URI where we expect the user to return, once the bank has completed its part with the user. We use google in our example to avoid hosting a service but for in a real scenario, you would put a dedicated URI from your web applications.
+* `state` and `nonce` serves the same purpose for us here: having a reference to the request. It's important as once the user is redirected to the bank, you will be waiting for a callback. We are zooming on one request but imagine when you will do a lot of requests in parallel. As it's an asynchronous process, you will need a way to bind the callback to the initial request you made. As `state` and `nonce` really serve the same purpose, I would personally recommend putting the same value in both. Depending of how you persisted the consent ID, you probably already have an ID that could play the role of state. If not, a common way is to store the current state of your application before doing the redirection, and use the state id as a value for `state`.
 * `claims`: the claims is a way for Open Banking to add custom values without breaking the OIDC standard. It may sounds a bit weird for you, as a developer, to have to format it that way. You can ignore that technical details for now and replace `AAC_616395ad-efb2-4875-85d9-b63a34586f2e` your consent ID.
 
 
 What you need to do with this request parameter, is to sign it. For that, we are going to use the JWS format.
-If you remember the registration, we had to sign a JWS as well. For this tutorial, you can use the JWKMS provided by ForgeRock:
+If you remember the registration, we had to sign a JWS as well. For this tutorial, you can use also the JWKMS provided by ForgeRock:
 
 ```
 POST /api/crypto/signClaims HTTP/1.1
@@ -219,56 +226,61 @@ eyJraWQiOiIyYTNmM2I3ZWQ3MTc0M2FiM2UzNzJkYTk2Y2FiZmJiMzYzZmM5MmQ3IiwiYWxnIjoiUFMy
 ```
 
 
-Now that you got the request parameter ready, you need to build the redirection url that the user needs to follow.
-For that, you need to know which url from the bank to redirect to. This information can be find in the response of the bank AS discovery endpoint.
+Now that you got the request parameter ready, you need to build the redirection url for the user needs to follow.
+For that, you need to know which url from the bank to use. This information can be find in the response of the bank AS discovery endpoint.
 ```
     "authorization_endpoint": "https://as.aspsp.ob.forgerock.financial/oauth2/authorize",
 ```
 
-The OIDC standards requires you to build the URI a certain way, for security reason mainly:
+The OIDC standards requires you to build the URI a certain way, for security reason mainly. Here is the template you can use:
 
 ```
 https://as.aspsp.ob.forgerock.financial/oauth2/authorize?response_type=code%20id_token&client_id=678c4cc1-12e4-4c82-84fd-73cbf609535a&state=10d260bf-a7d9-444a-92d9-7b7a5f088208&redirect_uri=https://www.google.com&nonce=10d260bf-a7d9-444a-92d9-7b7a5f088208&scope=openid%20accounts&request=eyJraWQiOiIyYTNmM2I3ZWQ3MTc0M2FiM2UzNzJkYTk2Y2FiZmJiMzYzZmM5MmQ3IiwiYWxnIjoiUFMyNTYifQ.eyJhdWQiOiJodHRwczpcL1wvYXMuYXNwc3Aub2IuZm9yZ2Vyb2NrLmZpbmFuY2lhbFwvb2F1dGgyIiwic2NvcGUiOiJvcGVuaWQgYWNjb3VudHMiLCJpc3MiOiI2NzhjNGNjMS0xMmU0LTRjODItODRmZC03M2NiZjYwOTUzNWEiLCJjbGFpbXMiOnsiaWRfdG9rZW4iOnsiYWNyIjp7InZhbHVlIjoidXJuOm9wZW5iYW5raW5nOnBzZDI6c2NhIiwiZXNzZW50aWFsIjp0cnVlfSwib3BlbmJhbmtpbmdfaW50ZW50X2lkIjp7InZhbHVlIjoiQUFDXzYxNjM5NWFkLWVmYjItNDg3NS04NWQ5LWI2M2EzNDU4NmYyZSIsImVzc2VudGlhbCI6dHJ1ZX19LCJ1c2VyaW5mbyI6eyJvcGVuYmFua2luZ19pbnRlbnRfaWQiOnsidmFsdWUiOiJBQUNfNjE2Mzk1YWQtZWZiMi00ODc1LTg1ZDktYjYzYTM0NTg2ZjJlIiwiZXNzZW50aWFsIjp0cnVlfX19LCJyZXNwb25zZV90eXBlIjoiY29kZSBpZF90b2tlbiIsInJlZGlyZWN0X3VyaSI6Imh0dHBzOlwvXC93d3cuZ29vZ2xlLmNvbSIsInN0YXRlIjoiMTBkMjYwYmYtYTdkOS00NDRhLTkyZDktN2I3YTVmMDg4MjA4IiwiZXhwIjoxNTczNDExODU5LCJub25jZSI6IjEwZDI2MGJmLWE3ZDktNDQ0YS05MmQ5LTdiN2E1ZjA4ODIwOCIsImlhdCI6MTU3MzQxMDk2NSwiY2xpZW50X2lkIjoiNjc4YzRjYzEtMTJlNC00YzgyLTg0ZmQtNzNjYmY2MDk1MzVhIiwianRpIjoiOGEwYTI0MGMtN2ZhNS00MjdlLWIyZjQtZTkwMTE1ZGI4MDcyIn0.TMvSWvEWnbqngrQfU-KOrW9-iUdMBegYN8fNxVy7TNazr5zgY0tmcFYYcyrb0eIGVlLlmm4_gBlEDt5h57Q8LJlrkrKQFNlELaCMeLZAhR19d5eGJB3XdzGH8-lJYeLwl96V1K-lvVvTQ_L8qaFWY8NQeRGbC5fsiYBlL9vZdbXVPHqpQRLXmL-1N2n452VJYiyKT0UGO1K64QBY91zacdMnRp_8zyGiHddRH7FOp2OsUfiR_ldNaVeICcERh6AYVvxTVoCairSM8DECd6B1n06s5HC-F1Zm4KqAqqSiT42tQ9z_gAPDwPEGBAkS-rH6oHY004Rkx8dMiji7NRjktg
 ```
 
 You need now to redirect the user to this URI with a simple 302.
-At this point, the user is authenticating and authorising the consent to the bank. Unfortunately you can't tell the status of this flow at this point, it's only happening between the user and the bank. All you can do is wait for the user to come back to your application.
-If everything goes well, the bank is going to redirect the user the same way you did, to your redirect URI.
-The bank is going to transmit you information to you the same way, via the parameters.
-The only difference is that for security reason, the information are send in the fragment of the request:
+
+From now, the user is authenticating and authorising the consent to the bank. Unfortunately you can't tell the status of this flow at this point, it's only happening between the user and the bank. All you can do is wait for the user to come back to your application.
+If everything goes well, the bank is going to redirect the user to your redirect URI.
+The bank is going use the same trick to send you information, via the parameters.
+The only difference is that for security reason, the information are send not via the GET parameter but the fragment of the request:
 Https://your-redirect-uri.com/my-path#foo=bar
-In the example, foo->bar is the information send to you. The fragment is not send to the server side, it is only accessible via the client side like JS. You will need to write a bit of JS to compute those parameters. The best things to do is to send them to a backend server via a POST. You may wonder what the goal really if at the end, you send it to the backend anyway. The difference is on the http method used. A GET request, which is a 302, has its GET parameters accessible to browser history, proxy audit logs etc, whereas a POST request has its payload encrypted and signed, and not accessible by any other party then the backend. I agree it's a bit painful to have to go through this fragment and send it to the backend, unfortunately it's a non avoidable job to do.
+In the example, foo->bar is the information send to you. It is good to know that the fragment is not send to the server side, it is only accessible via the client side like JS. You will need to write a bit of JS to compute those parameters. The easiest things to do is to send those fragment parameters to your backend server via a POST. You may wonder what the goal really if at the end, you send it to the backend anyway. The difference is on the http method used. A GET request, which is a 302, has the GET parameters accessible to browser history, proxy audit logs etc, whereas a POST request has its payload encrypted and signed, and not accessible by any other party then the backend. I agree it's a bit painful to have to go through this fragment and send it to the backend, unfortunately you can't workaround it. 
+For our tutorial, we will do that manually so don't worry about writing this JS script yet.
 
 Now it's time to follow the redirect you created earlier into a new incognito web browser tab. This way, you will simulate the journey of the user Alice. 
+It's really important to understand that you are changing your role here: you are not the developer anymore, you become Alice that has been redirected to her bank.
 1. You should be redirected to the bank login page. 
 2. Use the credential `Alice` / `changeit`
 3. You should now be redirect to the consent page
 4. Approve the consent request
-5. You should be redirected to the redirect uri with some fragment information in it
+5. You should be redirected to the redirect URI with some fragment information in it
+Once you get call back via the redirect URI with some information in the fragment, you are back to your previous role: the developer.
 
-In our tutorial so far we used google as a redirect uri. It allows us to not have to host a service and still been able to use Postman.
+In our tutorial so far we used google as a redirect URI. It allows us to not have to host a service and still been able to use Postman.
 For me, the redirection looks like:
 ```
 https://www.google.com/#code=2SSqrV318h_c50BGDA6Osfj5-8Y.GnvacU7_cLQa9oraGwGjNIbX7jQ&id_token=eyJraWQiOiIyYzk3ZDdmOWQyYjRkNTE5OTI4MDM2MGVkZTMzZTYzZDQ4MTUwOTRkIiwiYWxnIjoiUFMyNTYifQ.eyJzdWIiOiJBQUNfNTJiNjk2M2EtYjhhYy00Y2M3LTk0YjgtZmI1ODU5OGVkODhmIiwiYXVkaXRUcmFja2luZ0lkIjoiMTQ0MzY0ZmUtYzE5Mi00Mzc2LWFjNjctMWNjZjI1NzdjNDBiLTMyMzg1IiwiaXNzIjoiaHR0cHM6XC9cL2FzLmFzcHNwLm9iLmZvcmdlcm9jay5maW5hbmNpYWxcL29hdXRoMiIsInRva2VuTmFtZSI6ImlkX3Rva2VuIiwibm9uY2UiOiIxMGQyNjBiZi1hN2Q5LTQ0NGEtOTJkOS03YjdhNWYwODgyMDgiLCJhY3IiOiJ1cm46b3BlbmJhbmtpbmc6cHNkMjpzY2EiLCJhdWQiOiI2NzhjNGNjMS0xMmU0LTRjODItODRmZC03M2NiZjYwOTUzNWEiLCJjX2hhc2giOiJ1NmxLS1lsZmFUYmtHUEpQVG04YTNBIiwib3BlbmJhbmtpbmdfaW50ZW50X2lkIjoiQUFDXzUyYjY5NjNhLWI4YWMtNGNjNy05NGI4LWZiNTg1OThlZDg4ZiIsInNfaGFzaCI6IlhOU3VSWnNKVW9aY3Y3WTkwaDRaX1EiLCJhenAiOiI2NzhjNGNjMS0xMmU0LTRjODItODRmZC03M2NiZjYwOTUzNWEiLCJhdXRoX3RpbWUiOjE1NzM1NTE0MDEsInJlYWxtIjoiXC9vcGVuYmFua2luZyIsImV4cCI6MTU3MzYzNzgxNywidG9rZW5UeXBlIjoiSldUVG9rZW4iLCJpYXQiOjE1NzM1NTE0MTcsImp0aSI6ImYxZmQxODMzLWQ1NGEtNDZkZi1iM2ZlLTAyYWE2ZWI0ZjEyMSJ9.aQnKLF8iPX_2G1ceRQ2-b8iNkqsv0g493jkuVRqa-Rwar8Lm6Xm7FLeS8bgROu_WLsUE9mIy2hRunXaZh3Nuubc3gQYbF0Mxqjuf1cvAAyi9ZSoaqDOCnS8UR_ofEvgALSqUV6ian-qfl70vlEGOdmydSRaKoLRug5YuVDJT4rpc2U3T7rHCAKq1W2VqcYVPaYs0ZPkqvZnpljr9gPjlQWmihExqK63JknmfxvBrt51lhJ6V6m9x7TfUwqEmDQALRDZJf61Y9q3lzveRBrci-B_oLp0tOjciq4DYq-ElW1oCWT5ME3tVFGQ0VTo2q4paZnDlslVu2VfI46XmxH294w&state=10d260bf-a7d9-444a-92d9-7b7a5f088208
 ```
 
-Not that easy to parse manually, I admit that. Fortunately parsing with JS would be much easier don't worry.
+Not that easy to parse manually, I admit that. Fortunately parsing with JS would be much easier. It's the fact we are doing it manually that makes it tricky to do.
+
 You can notice the following parameters:
 * `code`: `2SSqrV318h_c50BGDA6Osfj5-8Y.GnvacU7_cLQa9oraGwGjNIbX7jQ`
 * `id_token`: `eyJraWQiOiIyYzk3ZDdmOWQyYjRkNTE5OTI4MDM2MGVkZTMzZTYzZDQ4MTUwOTRkIiwiYWxnIjoiUFMyNTYifQ.eyJzdWIiOiJBQUNfNTJiNjk2M2EtYjhhYy00Y2M3LTk0YjgtZmI1ODU5OGVkODhmIiwiYXVkaXRUcmFja2luZ0lkIjoiMTQ0MzY0ZmUtYzE5Mi00Mzc2LWFjNjctMWNjZjI1NzdjNDBiLTMyMzg1IiwiaXNzIjoiaHR0cHM6XC9cL2FzLmFzcHNwLm9iLmZvcmdlcm9jay5maW5hbmNpYWxcL29hdXRoMiIsInRva2VuTmFtZSI6ImlkX3Rva2VuIiwibm9uY2UiOiIxMGQyNjBiZi1hN2Q5LTQ0NGEtOTJkOS03YjdhNWYwODgyMDgiLCJhY3IiOiJ1cm46b3BlbmJhbmtpbmc6cHNkMjpzY2EiLCJhdWQiOiI2NzhjNGNjMS0xMmU0LTRjODItODRmZC03M2NiZjYwOTUzNWEiLCJjX2hhc2giOiJ1NmxLS1lsZmFUYmtHUEpQVG04YTNBIiwib3BlbmJhbmtpbmdfaW50ZW50X2lkIjoiQUFDXzUyYjY5NjNhLWI4YWMtNGNjNy05NGI4LWZiNTg1OThlZDg4ZiIsInNfaGFzaCI6IlhOU3VSWnNKVW9aY3Y3WTkwaDRaX1EiLCJhenAiOiI2NzhjNGNjMS0xMmU0LTRjODItODRmZC03M2NiZjYwOTUzNWEiLCJhdXRoX3RpbWUiOjE1NzM1NTE0MDEsInJlYWxtIjoiXC9vcGVuYmFua2luZyIsImV4cCI6MTU3MzYzNzgxNywidG9rZW5UeXBlIjoiSldUVG9rZW4iLCJpYXQiOjE1NzM1NTE0MTcsImp0aSI6ImYxZmQxODMzLWQ1NGEtNDZkZi1iM2ZlLTAyYWE2ZWI0ZjEyMSJ9.aQnKLF8iPX_2G1ceRQ2-b8iNkqsv0g493jkuVRqa-Rwar8Lm6Xm7FLeS8bgROu_WLsUE9mIy2hRunXaZh3Nuubc3gQYbF0Mxqjuf1cvAAyi9ZSoaqDOCnS8UR_ofEvgALSqUV6ian-qfl70vlEGOdmydSRaKoLRug5YuVDJT4rpc2U3T7rHCAKq1W2VqcYVPaYs0ZPkqvZnpljr9gPjlQWmihExqK63JknmfxvBrt51lhJ6V6m9x7TfUwqEmDQALRDZJf61Y9q3lzveRBrci-B_oLp0tOjciq4DYq-ElW1oCWT5ME3tVFGQ0VTo2q4paZnDlslVu2VfI46XmxH294w`
 * `state`: `10d260bf-a7d9-444a-92d9-7b7a5f088208`
 
-The code is the authorisation code that you need to exchange in order to get an access token. It has a relatively short period of life, just the time for you to parse it and exchange it.
-You don't get directly the access token as otherwise, the user would be able to intercept it. By using a code as an intermediate step, it makes sure that only you get the access token. This is assure by the fact you need to authenticate in order to exchange the code.
+The `code` is the authorisation code that you need to exchange in order to get an access token. It has a relatively short period of life, just the time for you to parse it and exchange it.
+You may wonder why you don't get directly the access token. The reason is that it goes through the user web browser and the user would be able to intercept it otherwise. By using a code as an intermediate step, the flow makes sure that only you get the access token. This is warranty by the fact you need to authenticate in order to exchange the code.
 
-The state is useful for you to recover the state of the initial request. Remember that this step has happen unsynchronously and therefore you need a way to link the context to this response.
+The `state` is useful for you, as it will allow you to recover the state of the initial request. Remember that this redirection has happen un-synchronously from the point of the developer and therefore, you need a way to link the context to this response.
 
 The ID token here is not used for identity, as you would usually expect in OIDC. It is used more as detached signature. What this means is that we used the fact that the ID token is signed by the bank, to verify the information has not been corrupted on the way in.
 
 ### Verifying the parameters received
 For this tutorial, you can skip this section. It's something you need to do if you want to be bullet proof in your implementation.
 If you read the ID token, you will find the following payload.
-Note: You need to verify the ID token signature against the bank public keys. You can skip this for now for this tutorial but remember it's important to do it from a security point of view.
+Note: You need to verify the ID token signature against the bank public keys. You can skip this for now but remember it's important to do it from a security point of view.
 
 ```
 {
@@ -294,8 +306,8 @@ Note: You need to verify the ID token signature against the bank public keys. Yo
 
 You can find the `nonce` and the `intent ID` for example. The one that are important to verify really is the `c_hash` and `s_hash`.
 Those two claims allows you to verify respectively the `code` and `state` value, the one you received as part of the fragment.
-You need to do that as they are not signed, so by using the ID token and verifying the hashes matches the values you received, you make sure they have not been corrupted and you can trust them.
-To compute the hash of the state for example and then compare it with the s_hash, you can do something like:
+You need to do that as they are not signed (so the user could have trick you and edit them manually), so by using the ID token and verifying the hashes matches the values you received in the fragment, you can make sure they have not been corrupted and you can trust them.
+To compute the hash of the state for example and then compare it with the s_hash, you can do something like: (example in JAVA)
 
 ```
  public static String computeHash(String token) {
@@ -317,7 +329,7 @@ It's also good to check the `acr` and the other claims, as a sanity check.
 
 ## Exchange the code
 
-You got the authorisation code, you are nearly there. You need now to exchange it, which is trivial. All you need to do, is calling:
+You got the authorisation code, you are nearly there. You need now to exchange it, which you will see is trivial. All you need to do, is calling:
 
 ```
 POST /oauth2/access_token HTTP/1.1
@@ -341,7 +353,7 @@ As a response:
 
 
 For now, the claim that interest us is the `access_token`. It is a token you need to store securely. It has a short time life. This is why you receive as well a refresh_token that allows you to regenerate an access token from it.
-We will see in a future article how to use the refresh token. For now, let's use the access token!
+We will see in a future article how to use the refresh token. For now, let's use our access token!
 
 ## Getting the accounts
 
@@ -422,9 +434,10 @@ As a result:
 ```
 
 You can use this access token to other endpoints the same way.
-
+We will see in the next article how to use it to retrieve transactions.
 
 ## Conclusion
 
 As you saw, having an authorisation flow involving three parties is not trivial. You need to get all the parties communicating in a 1-1 relationship before been able to consume the APIs.
-We used an account access as an example, the good thing of Open Banking UK is this flow is similar for every kind of access. In fact, the concept can be re-used for any kind of APIs. Once you implemented the flow in a generic way, you will be able to re-use it multiple times.
+We used an account access as an example, the good thing of Open Banking UK is this flow is common for every kind of access. In fact, the concept can be re-used for any kind of APIs. Once you implemented the flow in a generic way, you will be able to re-use it multiple times.
+It goes even further than Open Banking UK. You will see that this flow is also very similar in a lot of standards around the world.

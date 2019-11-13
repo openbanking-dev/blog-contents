@@ -1,6 +1,8 @@
 # Overview of the Open Banking APIs.
 
-Before going into a deep dive into Open Banking, let's talk about the APIs and what they have to offer to you.
+*This article is part of a set of tutorial about Open Banking UK.If you are interested to learn about Open Banking UK, you may want to check-out first our intro article.*
+
+Before going into a deep dive into how works Open Banking UK, let's talk first about the APIs and what they have to offer to you.
 
 There are four different types of APIs:
 * Account and Transaction
@@ -10,9 +12,9 @@ There are four different types of APIs:
 
 ## Account and Transaction
 
-That's the name used by the standard, and no, it's not just 2 APIs, ie one to see the user account and another to see the transactions.
-Those APIs will offer you to access all the user financial data. 
-How I personally see it is by comparing it with my bank portal I usually go on my web browser. Everything you can retrieve from your bank portal, you will _pretty much_ be able to access them via APIs.
+That's the name used by the standard, and no, it's not just two APIs, ie one to see the user account and another to see the transactions.
+Those APIs will cover the access to all the user financial data. 
+I usually compare them with my bank web portal. Basically, everything you can retrieve from your bank portal, you will _pretty much_ be able to access them via APIs.
 
 Here is the list of the APIs:
 * Get accounts
@@ -33,26 +35,21 @@ As you can notice, they are all `Get` APIs, meaning you got a read access privil
 Although for APIs like standing orders, you may have wish a way to create new one. It's actually covered by the payment APIs.
 
 
-Before we got in the details of each APIs, let me explain you the concept of bulk.
-Some APIs will offer you two modes: Data for a specific account or for all accounts, which it's called bulk. The easiest is to take an example, the `Get transactions`.
+Before we got in the details of each APIs, let explain the concept of bulk.
+Some APIs will offer you two modes: Data for a specific account or for all accounts: the last one is called bulk. The easiest is to take an example, the `Get transactions`.
 * You can request the transactions for a specific account
 * You can request the transaction for all the accounts at the same time -> Bulk
 
 They could have designed the APIs to take an account id in the GET parameters. Instead, they choose to define the account id in the path. It's no big deal, just thought you needed to be aware of it, as it creates this concept of `bulk`.
-
-What is good to mention is that the output formats of the two modes, are the same. Open Banking choose deliberately the same output to make it easier for you.
-To make it compatible, when filtering by account, it will return still an array, but with one element only.
-
-_I won't give an example for both output each time, just consider that in the case of a bulk, you got multiple entries in the array_
+What is good for us is the fact that the output formats of the two modes, are the same. 
 
 
 ### Get accounts
 
-It's the first one you will use most likely. It gives you the list of bank accounts owned by the user, that it was willing to share with you.
-The user has controls over what accounts he can share with you. He may have choose to share access all of his account, or a subset. That's why starting by 'get accounts' is a good way for you to know the list of accounts the user shared with you.
+It's the first one you will use most likely. It gives you the list of bank accounts owned by the user that he choose to share with you. Yes, the user has controls over what accounts he can share with you. He may have choose to share access all of his account, or a subset. That's why starting by 'get accounts' is a good way for you to know the list of accounts the user is sharing with you.
 
 Here is an example of what you would received from this API.
-The important bit is the `AccountId` for this one. It will be the id you would need to use to filter the resources to that specific account.
+The important bit for the using the other APIs is the `AccountId`. It will be the id you would need to use to filter the resources to that specific account.
 
 ```
 GET /open-banking/v3.1.1/aisp/accounts/
@@ -109,7 +106,7 @@ GET /open-banking/v3.1.1/aisp/accounts/
         ]
     },
     "Links": {
-        "Self": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts"
+        "Self": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts"
     },
     "Meta": {
         "TotalPages": 1
@@ -147,7 +144,7 @@ GET /open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282
     ]
   },
   "Links": {
-    "Self": "/accounts/055bdf14-9b5d-42b5-bdb3-c3e118ecee02"
+    "Self": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/055bdf14-9b5d-42b5-bdb3-c3e118ecee02"
   },
   "Meta": {
     "TotalPages": 1
@@ -188,7 +185,7 @@ GET /open-banking/v3.1.1/aisp/balances
         ]
     },
     "Links": {
-        "Self": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/balances"
+        "Self": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/balances"
     },
     "Meta": {
         "TotalPages": 1
@@ -199,7 +196,7 @@ GET /open-banking/v3.1.1/aisp/balances
 ### Get transactions
 
 Our super star, the transactions APIs. It allows you to retrieve the transactions of an account or all accounts.
-I just let you discover the payload, it self explanatory.
+I just let you discover the payload, it self-explanatory.
 
 By account
 ```
@@ -249,10 +246,10 @@ GET /open-banking/v3.1.1/aisp/transactions
         ]
     },
     "Links": {
-        "Self": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/transactions",
-        "First": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/transactions?page=0",
-        "Next": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/transactions?page=1",
-        "Last": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/transactions?page=23"
+        "Self": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/transactions",
+        "First": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/transactions?page=0",
+        "Next": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/transactions?page=1",
+        "Last": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/transactions?page=23"
     },
     "Meta": {
         "TotalPages": 24
@@ -262,7 +259,7 @@ GET /open-banking/v3.1.1/aisp/transactions
 
 ### Get beneficiaries
 
-As I said, you will be able to retrieve all the information from the bank portal. Something I am quite used to, is to define the beneficiary of my future direct debits.
+Something I am quite used to as a bank customer, is to define the beneficiaries of my future direct debits.
 This API allows you to retrieve all the beneficiary that the user has defined in his bank.
 
 By account:
@@ -293,7 +290,7 @@ GET /open-banking/v3.1.1/aisp/beneficiaries
         ]
     },
     "Links": {
-        "Self": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/beneficiaries"
+        "Self": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/beneficiaries"
     },
     "Meta": {
         "TotalPages": 1
@@ -336,7 +333,7 @@ GET /open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/dire
         ]
     },
     "Links": {
-        "Self": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/direct-debits"
+        "Self": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/direct-debits"
     },
     "Meta": {
         "TotalPages": 1
@@ -372,7 +369,7 @@ GET /open-banking/v3.1.1/aisp/product
         ]
     },
     "Links": {
-        "Self": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/product"
+        "Self": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/product"
     },
     "Meta": {
         "TotalPages": 1
@@ -425,7 +422,7 @@ GET /open-banking/v3.1.1/aisp/standing-orders
         ]
     },
     "Links": {
-        "Self": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/standing-orders"
+        "Self": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/standing-orders"
     },
     "Meta": {
         "TotalPages": 1
@@ -458,7 +455,7 @@ GET /open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/part
         }
     },
     "Links": {
-        "Self": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/party"
+        "Self": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/party"
     },
     "Meta": {
         "TotalPages": 1
@@ -470,7 +467,7 @@ GET /open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/part
 Now let's talk about the /party. As I said, you may think it's a bulk like the others but it's not.
 It's actually returning the identity of the current user. 
 
-I personally works for an identity provider and this endpoint has always been dodgy to me. The reason for me to not been a huge fan of it, is that identity should be provided via an ID token. There is already standards to do that, I am not entirely convinced we needed a dedicated API for it.
+Personal note: Haven been working for an identity provider, this endpoint has always look dodgy to me. The reason I never been a huge fan of it, is because identity should be provided via an ID token in my opinion. There is already standards to do that, I am not entirely convinced we needed a dedicated API for it.
 The reason behind it is surely more political than technical. Defining standards is about compromise and I do feel that this `/party` is an illustration of it.
 
 
@@ -488,7 +485,7 @@ _note that the PartyID is different than the previous payload_
         }
     },
     "Links": {
-        "Self": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/party"
+        "Self": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/party"
     },
     "Meta": {
         "TotalPages": 1
@@ -499,8 +496,8 @@ _note that the PartyID is different than the previous payload_
 ### Get offers
 
 Banks can do offers to the user. It's a different kind of APIs compared to the one we saw earlier.
-You may not like it or need it, although it does open the door to new kind of financial services: Comparing banks offers.
-This time, I kind of feel that only seeing the offer of a user may be a bit limiting. As a developer, I can imagine a comparator of offers, but not sure I see the value if the user needs to be already a customer of the bank I can only list.
+You may not need it, although it does open the door to new kind of financial services: Comparing banks offers.
+This time, I kind of feel that only seeing the offer of a user may be a bit limiting. As a developer, you could imagine a comparator of offers, but not sure I see the value if the user needs to be already a customer of the bank I can only list.
 In any case, you will have more imagination than me to see a usage for that API. Sure thing is, it's nice to be able to get the offers available to the current user.
 
 By account
@@ -538,7 +535,7 @@ GET /open-banking/v3.1.1/aisp/offers
         ]
     },
     "Links": {
-        "Self": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/offers"
+        "Self": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/offers"
     },
     "Meta": {
         "TotalPages": 1
@@ -583,7 +580,7 @@ GET /open-banking/v3.1.1/aisp/scheduled-payments
         ]
     },
     "Links": {
-        "Self": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/scheduled-payments"
+        "Self": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/scheduled-payments"
     },
     "Meta": {
         "TotalPages": 1
@@ -642,10 +639,10 @@ GET /open-banking/v3.1.1/aisp/statements
         ]
     },
     "Links": {
-        "Self": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements",
-        "First": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements?page=0",
-        "Next": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements?page=1",
-        "Last": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements?page=1"
+        "Self": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements",
+        "First": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements?page=0",
+        "Next": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements?page=1",
+        "Last": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements?page=1"
     },
     "Meta": {
         "TotalPages": 2
@@ -700,10 +697,10 @@ GET /open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/stat
         ]
     },
     "Links": {
-        "Self": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements/8a163bbc-bbc0-4de5-bb12-ee46f49814b5/transactions",
-        "First": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements/8a163bbc-bbc0-4de5-bb12-ee46f49814b5/transactions?page=0",
-        "Next": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements/8a163bbc-bbc0-4de5-bb12-ee46f49814b5/transactions?page=1",
-        "Last": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements/8a163bbc-bbc0-4de5-bb12-ee46f49814b5/transactions?page=2"
+        "Self": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements/8a163bbc-bbc0-4de5-bb12-ee46f49814b5/transactions",
+        "First": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements/8a163bbc-bbc0-4de5-bb12-ee46f49814b5/transactions?page=0",
+        "Next": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements/8a163bbc-bbc0-4de5-bb12-ee46f49814b5/transactions?page=1",
+        "Last": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/statements/8a163bbc-bbc0-4de5-bb12-ee46f49814b5/transactions?page=2"
     },
     "Meta": {
         "TotalPages": 3
@@ -727,7 +724,7 @@ In particular, they both offers single payments, schedule payment and standing o
 
 A domestic payment is a payment in the same currency, as opposed to an international payment.
 
-Domestic payment is offering three kind of payments:
+Domestic payment offers three kind of payments:
 
 * single payments
 * schedule payment
@@ -1261,14 +1258,14 @@ GET /open-banking/v3.1.1/pisp/domestic-payments/PDC_9ddce5f2-52cb-4a3e-b26
 
 ## Confirmation of funds
 
-Confirmation of funds is a set of APIs focusing with a simple task: telling you by a yes and no answer, if the user has enough funds.
+Confirmation of funds is a set of APIs focusing on a simple task: telling you by a yes and no answer, if the user has enough funds.
 Obviously you could say that the `Get balances` would do the job. Thing is, some developers may not have the permissions to access the account and transaction APIs.
 We will talk in another article about the trusting model of Open Banking and how permissions are granted. 
-Things important for us to know now it's easier to get permissions for the confirmation of funds than the account and transactions APIs.
-Developers only interested by know if the user has enough funds may just consider only requesting the confirmation of funds permission then.
+As a Fintech, it is easier to get permissions for the confirmation of funds than the account and transactions APIs.
+Developers only interested by know if the user has enough funds may just consider only requesting the confirmation of funds permission.
 
 Another interesting usage of the confirmation of funds is during payments. This API has been designed as an extension of the payments APIs, and basically developers allowed to do payments can also use the confirmation of funds APIs in the middle of the payment flow.
-I personally imagine that for large payment, you could make sure that the user has enough funds before even bothering trying to continue the rest of the payment flow.
+I personally imagine that for large payments, you could make sure that the user has enough funds before even bothering trying to continue the rest of the payment flow.
 
 ### Stand alone confirmation of funds
 
@@ -1330,16 +1327,16 @@ GET /open-banking/v3.1.1/pisp/domestic-payment-consents/PDC_615053fb-ae81-430c-8
         }
     },
     "Links": {
-        "Self": "https://rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/pisp/domestic-payment-consents/PDC_615053fb-ae81-430c-8d30-1a50a1d9ccb0/funds-confirmation"
+        "Self": "https://matls.rs.aspsp.ob.forgerock.financial/open-banking/v3.1.1/pisp/domestic-payment-consents/PDC_615053fb-ae81-430c-8d30-1a50a1d9ccb0/funds-confirmation"
     },
     "Meta": {}
 }
 ```
 
-As you can see, you don't need to specify the amount. As you are actually referring to the payments via `PDC_615053fb-ae81-430c-8d30-1a50a1d9ccb0`, the bank is able to deduce that you are actually asking if the user has enough funds for this associated payment.
+As you can see, you don't need to specify the amount. As you are actually referring to the payments via `PDC_615053fb-ae81-430c-8d30-1a50a1d9ccb0`, the bank is able to deduce remember the amount you are interested in.
 
 ## Conclusion
 
-We saw in the article the core of the APIs offered by Open Banking UK. The rest of the APIs that I voluntary haven't describe here, are designed to handle the authorisation part.
-This wasn't the kind of APIs we were interested in that article but when we will deep-dive on how the flows works, I will introduce those APIs and what purpose they served.
-You should now have a good idea of what kind of functionality/resources are offers by Open Banking UK, and hope it's giving you new ideas for your current or future project!
+We saw in the article the core of the APIs offered by Open Banking UK. The rest of the APIs that I voluntary haven't describe here, are designed to handle the security part. We will talk about them once we reach the security flow.
+
+You should now have a good idea of what kind of functionalities/resources are offers by Open Banking UK, and hope it's giving you new ideas for your future projects!

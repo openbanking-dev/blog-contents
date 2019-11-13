@@ -1,8 +1,12 @@
 # On-boarding your application to the bank
 
-For the moment, you are an anonymous developer to the eco-system. As we mentioned in the previous articles, there is an Open Banking circle of trust system and basically your first mission is to join it.
-To base our articles, we are going to use the ForgeRock model bank and they do have an Open Banking directory dedicated for it.
-We are going to use it to join the circle of trust for the model bank and what is nice, is that there isn't any barrier of entry for it. Anyone can register and that's ideal for learning Open Banking.
+*This article is part of a set of tutorial about Open Banking UK, although, they are all written to be read as a standalone article. If you are interested in learning about Open Banking UK, you may want to start by our intro article.*
+
+In order to use the Open Banking APIs, you will need to register your application to each of the banks. We will see in this article how the on-boarding process with each bank works.
+
+For the moment, you are an anonymous developer to the eco-system. There is an Open Banking circle of trust system and basically your first mission is to join it.
+Different one exist in parallel, for our set of tutorials, we are going to use the ForgeRock model bank and their ForgeRock Open Banking directory
+The advantage of using this one is that anyone can register, which is ideal for learning Open Banking.
 
 ## Register in the ForgeRock Open Banking directory
 
@@ -11,7 +15,8 @@ Go to https://directory.ob.forgerock.financial/ and register a new developer acc
 Once login, you would see a dashboard, with your organisation and the list of your software statements.
 
 ### Edit your organisation
-You can edit your organisation to reflect a bit more who you are. It's going to be used during the Open Banking flow when the user authorise the request.
+You can edit your organisation to reflect a bit more who you are. Some of the values will be used during the Open Banking flow, especially during the user authorise request.
+I would definitively complete this section if you intent to do a demo of Open Banking.
 
 ### Create a software statement
 A software statement is another word to say application. You can choose to have one application register and use it for everything, or you can choose to create multiples applications, up to you.
@@ -24,22 +29,23 @@ You will see on the top that there are a few tabs:
 * Software Statement Assertions (SSA): It's your financial passport if you like. It is a JSON signed (JWS) by the directory, that will attest that you are part of the circle of trust. This tab allows you to generate a new SSA on demand.
 * On Boarding: the directory can onboard for you to the ForgeRock bank. Although, we kind of want how the on-boarding works so we are going to do that manually.
 
-Cool fact: the directory also offers APIs, we will be able to do the same things we did in the UI but via the APIs. Very handy especially for generating a new SSA.
+Cool fact: the directory also offers APIs, we will be able to do the same things with the APIs than the UI. Very handy especially for generating a new SSA.
 
 #### General
 
 You can complete the entire form but if you feel a bit lazy like me, just complete the essential:
 * Name: It will displayed in the consent screen, it's nice to show a friendly name than a blank
-* redirect uris: we don't want to host an app for exploring Open Banking, we are going to use google. Put https://google.com
+* redirect URIs: we don't want to host an app for exploring Open Banking, we are going to use google. Put https://google.com
 * logo: It's also display in the consent. You can use ours for the exercise if you like. 
 
 
 #### Transport/Signing/Encryption keys
 
-The way you are going to authenticate, when doing a call to an API, is via MATLS. It means that server is going to present a certificates, called server certificate (basically what is httpS for) but you are going to present one too, which we call client certificate.
+The way you are going to authenticate, when doing a call the APIs, is via MATLS. It means that server is going to present a certificates, called server certificate (basically what is httpS for) but you are going to present one too, which we call client certificate.
 Instead of naming them server and client certificates, the directory is offering you transport certificate. It's because the directory doesn't care if you are a server or a client, so from its point of view, they are TLS certificates, which we also call transport certificate.
-All of that was just to say to download your current transport key!
-A certificate is the representation of an asymmetric key. Asymmetric imply a public and a private key.
+You will basically needs to download your transport certificates and use it as client certificates.
+All of that was just to say to download your current transport key :) 
+A certificate is the representation of an asymmetric key. Asymmetric implies a public and a private key.
 You will need to download the .pem and .key, in order to use this key in the future.
 
 Note that you can also download your signing key the same way. In this tutorial, we are going to use the JWKMS APIs, which would allow us to use this signing key indirectly, by authenticating with our transport certificate. 
@@ -48,17 +54,17 @@ This means you don't need to download your signing key to follow this tutorial.
 #### Software Statement Assertions
 
 You can try generating an SSA via the UI. It's a good way to explore.
-For our tutorial, we will do the same but via the directory API directly. No need to download an SSA now.
+For our tutorial, we will do the same but via the directory API. No need to download an SSA now.
 
 #### On-boarding
 
-We are going to use the API, to show you how it works. You can park this tab for the moment.
+We are not going to onboard using the directory. Instead, we will show you how to do it via APIs. You can skip this tab for today.
 
 ## Register your application to the bank
 
-You are now ready to register your application to the bank. As a reminder, you are registered in the directory and recognised now as part of the Open Banking eco-system for the sandbox, but the Forgerock mock bank itself doesn't know you yet.
+You are now ready to register your application to the bank. As a reminder, you are registered in the directory and recognised now as part of the Open Banking community for the sandbox, but the Forgerock mock bank itself doesn't know you yet.
 
-Under the cover, Open Banking uses OIDC and you are not registered as an OIDC client in the bank.
+Under the cover, Open Banking uses OIDC and technically, you are not registered as an OIDC client for the bank yet.
 
 ### Setting up Postman
 
@@ -74,15 +80,15 @@ The nice things with Open Banking, is once you managed to be register into the d
 By calling the dynamic registration APIs the right way, you directly get your OIDC clients register to the bank and you can start using the Open Banking APIs.
 
 Some banks are still not on top of the art on that subject and still offer manual registration. Unfortunately for those, you would have to follow their process, which would be unique for each banks. They are not a majority though. No cool for you but let's hope they all move on and adopt dynamic registration. 
-For this tutorial, we will show you dynamic 
+For this tutorial, we will show you dynamic way.
 
 #### The AS discovery
 
 Before we go in building this registration request, it's important to first read the supported features from the bank. 
 The AS (the Bank) discovery gives you the list of supported security features from this bank.
-What is nice by it is basically you only need to know the url of this endpoint to retrieve all the rest of the information you needs from the bank.
+What is nice by it is basically the only only endpoint you need to know for to retrieve all the rest of the information from the bank.
 It's also standardise, which is awesome as you would be able to automatise the discovery of the banks and maintain one piece of code!
-The standard: https://openid.net/specs/openid-connect-discovery-1_0.html
+The standard is there: https://openid.net/specs/openid-connect-discovery-1_0.html
 
 Here is an example of what ForgeRock mock bank supports:
 
@@ -227,23 +233,23 @@ curl -X GET \
 ```
 
 It's a lot, probably too much information to go through now.
-Please refer to the standard to get all the details about all the claims.
+Please refer to the standard to get all the details about all the claims but you don't need to do that now.
 Let's concentrate on the essentials claims for our tutorial:
-* `issuer`: it's the id to use when referring to the bank, when signing/receiving messages from it. Basically it's like the official name to put in a letter, if you wanted to send it to the bank. It's also the name you will see in a message you received from the bank. You will be able to tell that this message from the bank A this way.
-* `authorization_endpoint`: we will need to redirect the user to the bank at some point. It's this endpoint that the bank is telling us to redirect the user to.
+* `issuer`: it's the id to use when referring to the bank, when signing/receiving messages from it. Doing the analogy with sending a postcard, basically it's like the official name to put in a letter, if you wanted to send it to the bank. It's also the name you will see in a message you received from the bank. You will be able to tell that this message from the bank A this way.
+* `authorization_endpoint`: we will need to redirect the user to the bank at some point. It's this endpoint that the bank is telling us to redirect the user to when requesting the user authorisation.
 * `token_endpoint`: The token endpoint will be useful for us, to retrieve an access token. 
-* `registration_endpoint`: The registration endpoint, very handy for this article as we are going to use in a minute.
-* `scopes_supported`: A very useful one to check for you, as you may realise that the bank you are going to consume doesn't supports payments for example. May save you time if you are just interested to provide payment service and this bank is not yet offering those APIs.
-* `token_endpoint_auth_methods_supported`: That one is listing the way of authenticating that you will be able to do with this bank. The four mains one describe by Open Banking are:
-	* `client_secret_post` and `client_secret_basic`: Not recommended but still listed by Open Banking, just to allow more flexibilities at the beginning. It's basically a password authentication, as you are used to use. It's not recommended as if you compromise the password, well, it's not easy to get a new one. Password less is pretty cool and you will see that the two next one allows you to do that.
-	* `private_key_jwt`: The idea is to sign a JSON payload with your keys, and by agreeing on the payload of the JSON, this JWS becomes a form of ID (called client assertions). It's a nice usage of the signing concept to provide a way of authenticating people. We will see in more details how this work in this article.
-	* `tls_client_auth`: More standard in the industry but not very popular to developers, this method allows you to authenticate using a certificate. Commonly called MATLS in the rest of the industry, this method consist of sending a client certificate as part of TLS.
+* `registration_endpoint`: The registration endpoint, very handy for this article as we are going to use now.
+* `scopes_supported`: A very useful one to checkout, as you may realise that the bank doesn't supports payments for example. May save you time if you are just interested in providing payment service and this bank is not offering those APIs yet.
+* `token_endpoint_auth_methods_supported`: List the different authentication that you will be able to use with this bank. The four mains one describe by Open Banking are:
+	* `client_secret_post` and `client_secret_basic`: Not recommended but still used by Open Banking, just to allow more flexibilities at the beginning. It's basically a password authentication. Main reason of not recommending it is if you compromise the password, well, it's not easy to get a new one. Passwordless is pretty cool and you will see that the two next one allows you to do that.
+	* `private_key_jwt`: The idea is to sign a JSON payload with your keys, and by agreeing on the payload of the JSON, this JWT becomes a form of ID (called client assertions). It's a nice usage of the signing concept to provide a way of authenticating people. We will see in more details how this work in this article.
+	* `tls_client_auth`: More standard in the industry but not very popular to developers, this method allows you authenticating using a certificate. Commonly called MATLS in the rest of the industry, this method consist of sending a client certificate as part of TLS connection.
 
 
 ##### Which authentication method to use?
 
-It's nice to have the choice but which one should you use first? First, it's important to note that as some banks would not support all of the authentication methods yet, you probably going to end up to support all of them, just so you can consume all the banks available.
-The question becomes, once you support all the methods, what is the order of preference of the authentication methods?
+It's nice to have the choice but which one should you use? First, it's important to note that as some banks would not support all of the authentication methods yet, you probably to end up supporting all of them, just so you can consume all the banks APIs available.
+The question becomes, once you support all the methods, what is the preferred order of the authentication methods?
 If I had to say, here is the order I would say for Open Banking:
 * tls_client_auth
 * private_key_jwt
@@ -254,15 +260,17 @@ I would choose `tls_client_auth` first, as for Open Banking you need to setup yo
 
 #### Dynamic registration request JWT
 
-The dynamic registration request takes as a payload a JWS, which is a JSON payload signed.
+Coming back to on boarding, let's talk about the registration request.
+
+The dynamic registration request takes as a payload a JWS, which is a JSON signed.
 
 The format of this JSON is standardise by two standards:
 - OIDC dynamic registration https://openid.net/specs/openid-connect-registration-1_0.html
 - OAuth 2 dynamic registration https://tools.ietf.org/html/rfc7591
 
-I personally prefer reading the OIDC dynamic registration one first, it's easier to read in my opinion. The important things to note between the two is that the OAuth 2 dynamic registration defines the concept of SSA (it's our financial passport, see Directory article).
+I would recommend reading the OIDC dynamic registration first, it's easier to read in my opinion. The important things to note between the two is OAuth 2 dynamic registration defines the concept of SSA (it's our financial passport, see Directory article).
 
-For this article, we are going to use the following JSON which is a nice base to go from:
+For this article, we are going to use the following JSON as a base line:
 
 ```
 {
@@ -298,16 +306,16 @@ Lets describe the essential claims of this JSON:
 	* `accounts`: required to access accounts APIs
 	* `payments`: required to access payments APIs.
 	* `fundsconfirmations`: required to access confirmation of funds APIs.
-  It's important to note that your requested scopes would be double checked with the SSA.
-* `redirect_uris`: Part of the security flow which is covered in the following article, you will see that the flow is based on what we call a redirection model flow. At some point, you will need to receive a callback, with the response from the bank. For this tutorial, we are going to use google.com, you will see that it's fine as we will manual extract the response from the bank, by looking the Uris. 
-  An important things to note, that comes back to me regularly as a question, is that if you happen to change your redirection Uris for a reason, you will need to update your OIDC client in each of the bank. What that means is that you will need to do the dynamic registration again with all the banks you already onboard. Fortunately there is a PUT method for the dynamic registration but still, if you are onboard with 1000 banks, it can be a long process.
-  People usually things that by updating it in the directory UI, it's enough. It's the first step to do but unfortunately not enough. It will change the value in your financial passport, which is necessary, but the banks are not aware of this change yet, until you do a PUT in the dynamic registration.
-* `software_statement`: this is where you copy-paste your SSA from the directory. It's a JWS as well, it's a bit of a JWS inception we are doing but note that the SSA is signed by the directory, and the dynamic registration JWS signed by you. If you think of it, it's a nice way to make sure you are authorised to register, certified by a central authority which is the directory here, and also verifying your identity at the same time.
+  It's important to note that the requested scopes would be double checked by the SSA.
+* `redirect_uris`: Redirect URIs used during the security flow, which we will cover in the next article, you will see that the flow is based on what we call a redirection model flow. At some point, you will need to receive a callback, with the response from the bank. For this tutorial, we are going to use google.com. You will see that it's fine to use google for this tutorial, as we will manual extract the response from the parameters. 
+  An important things to note, that comes back to me regularly as a question, is if you happen to change your redirection Uris for a reason, you will need to update your OIDC client in each of the bank. What this means is that you will need to do the dynamic registration again with all the banks you already onboard. Fortunately there is a PUT method for the dynamic registration but still, if you are onboard with 1000 banks, it can be a long process.
+  People usually things that by updating it in the directory, it's enough. It's the first step to do but unfortunately not sufficient. It will change the redirect Uris in your financial passport, which is necessary, but the banks are not aware of this change yet, until you do a PUT in the dynamic registration.
+* `software_statement`: this is where you copy-paste your SSA from the directory. The SSA is a JWS as well, it's a bit of a JWS inception we are doing here but note that the SSA is signed by the directory, and the dynamic registration JWS signed by you. If you think of it, it's a nice way to make sure you are authorised to register, certified by a central authority, the directory in our case, and also verifying your identity at the same time.
 * `token_endpoint_auth_method`: choose the authentication method to use with this bank. As mentioned in the previous section, this method needs to be supported by the bank first.
 
 ##### Getting your SSA
 
-You can either go to the directory UI and download the SSA from there, or for this tutorial, use the ForgeRock directory APIs to get it programmatically.
+You can either go to the directory UI and download the SSA from the API, or for this tutorial, use the ForgeRock directory APIs to get it programmatically.
 
 Note: The ForgeRock directory is an online services that used MATLS to authenticate you and generate an SSA corresponding to your software statement. For that, you need to setup MATLS properly, which is the dedicated subject on this article.
 
@@ -322,18 +330,18 @@ curl -X POST \
 eyJraWQiOiIwYTNlNGJhYzVmMTg2OTFlNTcxNGJkNjM2ZWY4YzhjYWI2MmJlY2Q3IiwiYWxnIjoiUFMyNTYifQ.eyJvcmdfandrc19lbmRwb2ludCI6IlRPRE8iLCJzb2Z0d2FyZV9tb2RlIjoiVEVTVCIsInNvZnR3YXJlX3JlZGlyZWN0X3VyaXMiOltdLCJvcmdfc3RhdHVzIjoiQWN0aXZlIiwic29mdHdhcmVfY2xpZW50X25hbWUiOiJGb3JUZXN0XzcwN2U2MDgxLThhYzItNDNiOC05YTlmLWZhNzViZWUyMmRjOSIsInNvZnR3YXJlX2NsaWVudF9pZCI6IjcwN2U2MDgxLThhYzItNDNiOC05YTlmLWZhNzViZWUyMmRjOSIsImlzcyI6IkZvcmdlUm9jayIsInNvZnR3YXJlX2p3a3NfZW5kcG9pbnQiOiJodHRwczpcL1wvc2VydmljZS5kaXJlY3Rvcnkub2IuZm9yZ2Vyb2NrLmZpbmFuY2lhbDo0NDNcL2FwaVwvc29mdHdhcmUtc3RhdGVtZW50XC83MDdlNjA4MS04YWMyLTQzYjgtOWE5Zi1mYTc1YmVlMjJkYzlcL2FwcGxpY2F0aW9uXC9qd2tfdXJpIiwic29mdHdhcmVfaWQiOiI3MDdlNjA4MS04YWMyLTQzYjgtOWE5Zi1mYTc1YmVlMjJkYzkiLCJvcmdfY29udGFjdHMiOltdLCJvYl9yZWdpc3RyeV90b3MiOiJodHRwczpcL1wvZGlyZWN0b3J5Lm9iLmZvcmdlcm9jay5maW5hbmNpYWw6NDQzXC90b3NcLyIsIm9yZ19pZCI6IjVjNDVmODJkYTkzYjc1MDEyNWM3YWRlYiIsInNvZnR3YXJlX2xvZ29fdXJpIjoiaHR0cHM6XC9cL2kucG9zdGltZy5jY1wvaHRoUUNKaFJcL2ZyLWxvZ28tc3F1YXJlLTFjLWJsYWNrLnBuZyIsInNvZnR3YXJlX2p3a3NfcmV2b2tlZF9lbmRwb2ludCI6IlRPRE8iLCJzb2Z0d2FyZV9yb2xlcyI6WyJQSVNQIiwiREFUQSIsIkNCUElJIiwiQUlTUCJdLCJleHAiOjE1NzMzOTM3MzMsIm9yZ19uYW1lIjoiRm9yZ2VSb2NrIiwib3JnX2p3a3NfcmV2b2tlZF9lbmRwb2ludCI6IlRPRE8iLCJpYXQiOjE1NzI3ODg5MzMsImp0aSI6IjFlMGYyNGE2LTc2OWQtNGNjMi1hMWUxLTg1NDdmNmYyZjAxMiJ9.QC3NBjFhlHSl00wYfTWfgmpA0qLr_hV_5Urn2bsq5CJG2ZLxD52n9cBDnxgE41zorVQnzwDhcTipQ6W5t8hU9Da9HH4q8GhsV2W5uVFtpUy3M_oBbosmpHu55T7wKZpfoMGdEQ-zMVGvCsPuUqHXPlmL1TvC6uD1QLORCnwJORpH87d6DyqJ15a5yv8BjXiz2r1EKgoKr2k9jYoH8KpGAc3JA5XW5iCB1urLGb6nxHyPXjRuMEtTiVA-kybmkPoSClxLNijUPPSnxcL1WvMBswpHysOEUQtTZYa2MNS0xxoXh3KJIy5CU-q_zt8Xr474NFQV1dSO0T9JDjIl1NtgiQ
 ```
 
-You can store this SSA into a variable to re-use for our next section
+You can store this SSA into a variable to re-use it in the next section
 
 ##### Sign the registration request into a JWS
 
-What you need to do now is signing this JSON with your signing key, as a JWS.
+What you need to do now is signing this JSON with your signing key. This JSON then becomes a JWS.
 There is plenty of libraries around to do this, which will not cover in that article.
 In order to make the learning curve easier for you and to not have to worry yet about how to sign a JSON as JWS, ForgeRock offers a service, called JWKMS, which will do that for you.
 It's not intent to be used for production, but just as a way for you to not have to worry about signing, at the beginning of your Open Banking learning journey.
 
 Note: the JWKMS is an online service, which uses MATLS to authenticate you and sign messages on your behalf. For that, you need to setup MATLS properly, which is the dedicated subject on this article.
 
-Before calling the JWKMS, just one detail to sort up: Getting your software statement ID. The specification says that this JWS needs to be sign, using as an issuer ID your software statement ID. You can either goes to the directory UI and get the software statement ID from there, or use again the directory APIs:
+Before calling the JWKMS to sign our JSON, just one detail to sort up: Getting your software statement ID. The specification says that this JWS needs to be signed, using your software statement ID as an issuer ID. You can either go to the directory UI and get the software statement ID from there, or use again the directory APIs:
 
 ```
 curl -X GET \
@@ -358,9 +366,9 @@ curl -X GET \
 }
 ```
 
-Plenty of information returns but we will only keep the `id` for our next request: signing the registration request!
+Plenty of information in this response but we will only keep the `id` for our next request: signing the registration request!
 
-For us today, we will use the JWKMS APIs and for signing our JSON payload, we call:
+For us today, we will use the JWKMS APIs. For signing our JSON payload, we call:
 
 ```
 curl -X POST \
@@ -456,17 +464,17 @@ As a result:
 }
 ```
 
-Important things to note is that, even if you requested some values for your OIDC client, the specification says that the bank can override them if they want to. A bit annoying you may way but that's part of the game. It's always best to verify that it's not been the case and not consider what you request but more the response object instead.
+Important things to note is that, even if you requested some specific values for your OIDC client like `"token_endpoint_auth_method": "tls_client_auth"`, the specification says that the bank can override them if they want to. A bit annoying you may think but that's part of the game. It's always best to verify that it's not been the case. From a code point of view, store the response of the registration but not necessarily the request you did.
 
-The response is standardise, we will cover only cover the main one you should really know about:
-* `client_id`: The one to not miss and store preciously somewhere. This client ID is the proof that you successfully registered and can use the bank APIs. It will be asked by the bank in several place, so best to keep it accessible easily. This client ID is also refer as the OIDC client ID.
+The response is standardise, we will only cover the main one you should know about:
+* `client_id`: The one to not miss and store preciously somewhere. This client ID is the proof that you successfully registered and can use the bank APIs. The bank is going to request it in different places of the flow, it is best to keep it accessible easily. This client ID is also refer as the OIDC client ID. 
 * `redirect_uris`: remember that this is the list of redirect URIs that the bank will authorise to redirect to. If you need to change it, you need to do a PUT again.
 * `registration_access_token`: don't miss that one, it's important to store it somewhere precious too. It's the only time it will be returned to you so best not loosing it. It's mandatory for PUT/DELETE/GET your OIDC client information via the dynamic registration endpoint.  
 
 
 ## Conclusion
 
-Congratulations! Quite a lot of efforts just to be on-board into the system. The real value of this complexity is its ability to be full programmable. 
-We will only on-board with ForgeRock mock bank for this tutorial but in the reality, you would on-board with all the banks following a similar pattern.
-It's probably a good idea to abstract the on-boarding to a dedicated micro-services, to isolate this complexity from the rest of your system.
+Congratulations! Quite a lot of efforts just to on-board into the bank. The real value of this complexity is to be full programmable. 
+We will only on-board with ForgeRock mock bank for this tutorial but in the reality, you would on-board with all the banks following a similar pattern. One day, we may see some libraries dedicated to on-boarding.
+Tips: It's probably a good idea to abstract the on-boarding to a dedicated micro-services, to isolate this complexity from the rest of your system.
 Now that you are on-board, we can see how to consume the APIs but first, we need to talk about the flow from a theory aspect, especially the security side of it.
