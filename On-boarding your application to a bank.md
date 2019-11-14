@@ -86,7 +86,7 @@ For this tutorial, we will show you dynamic way.
 
 Before we go in building this registration request, it's important to first read the supported features from the bank. 
 The AS (the Bank) discovery gives you the list of supported security features from this bank.
-What is nice by it is basically the only only endpoint you need to know for to retrieve all the rest of the information from the bank.
+What is nice about this is that it's the only endpoint you need to know to retrieve all the rest of the information from the bank.
 It's also standardise, which is awesome as you would be able to automatise the discovery of the banks and maintain one piece of code!
 The standard is there: https://openid.net/specs/openid-connect-discovery-1_0.html
 
