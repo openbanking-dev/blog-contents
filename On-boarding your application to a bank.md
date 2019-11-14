@@ -79,7 +79,7 @@ Lets do that now:
 The nice things with Open Banking, is once you managed to be register into the directory, you can do a dynamic registration to the bank. What this means is that there isn't any manual process involved, no approval requires etc.
 By calling the dynamic registration APIs the right way, you directly get your OIDC clients register to the bank and you can start using the Open Banking APIs.
 
-Some banks are still not on top of the art on that subject and still offer manual registration. Unfortunately for those, you would have to follow their process, which would be unique for each banks. They are not a majority though. No cool for you but let's hope they all move on and adopt dynamic registration. 
+Some banks are still not on top of the art on that subject and still offer manual registration. Unfortunately for those, you would have to follow their process, which would be unique for each banks. They are not a majority though. Not ideal for you but let's hope they all move on and adopt dynamic registration. 
 For this tutorial, we will show you dynamic way.
 
 #### The AS discovery
