@@ -96,7 +96,7 @@ Here is an example of what ForgeRock mock bank supports:
 curl -X GET \
   https://as.aspsp.ob.forgerock.financial/oauth2/.well-known/openid-configuration
   
-  {
+{
     "version": "3.1.2",
     "issuer": "https://as.aspsp.ob.forgerock.financial/oauth2",
     "authorization_endpoint": "https://as.aspsp.ob.forgerock.financial/oauth2/authorize",
