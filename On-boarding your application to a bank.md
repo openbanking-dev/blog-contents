@@ -71,7 +71,7 @@ Under the cover, Open Banking uses OIDC and technically, you are not registered 
 Lets do that now:
 
 * Download postman and our collection. See X
-* Setup your transport certificate into postman as your client certificate
+* Setup your transport certificates in postman as your client certificate. You can use the domain `*.ob.forgerock.financial`. To find out how to do this see https://learning.getpostman.com/docs/postman/sending-api-requests/certificates/
 * Test MATLS
 
 ### Dynamic registration
