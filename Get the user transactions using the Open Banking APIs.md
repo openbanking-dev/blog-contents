@@ -107,7 +107,7 @@ Follow the security flow and use this account consent access payload and get an 
 
 ## Get all the transactions
 
-Now that you got an access token, you can start consuming the transactions APIs!
+Now that you've got an access token, you can start consuming the transactions APIs!
 You can use the bulk API to retrieve the transactions from all the accounts at the same time.
 Very simple, all you need to do is:
 
