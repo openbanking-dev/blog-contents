@@ -68,11 +68,7 @@ Under the cover, Open Banking uses OIDC and technically, you are not registered 
 
 ### Setting up Postman
 
-Lets do that now:
-
-* Download postman and our collection. See X
-* Setup your transport certificates in postman as your client certificate. You can use the domain `*.ob.forgerock.financial`. To find out how to do this see https://learning.getpostman.com/docs/postman/sending-api-requests/certificates/
-* Test MATLS
+If you are interested to follow this tutorial and execute the requests at the same time, you can follow this article that will help you setting up Postman.
 
 ### Dynamic registration
 
@@ -93,10 +89,12 @@ The standard is there: https://openid.net/specs/openid-connect-discovery-1_0.htm
 Here is an example of what ForgeRock mock bank supports:
 
 ```
-curl -X GET \
-  https://as.aspsp.ob.forgerock.financial/oauth2/.well-known/openid-configuration
-  
-{
+GET /oauth2/.well-known/openid-configuration HTTP/1.1
+Host: as.aspsp.ob.forgerock.financial
+```
+
+```
+  {
     "version": "3.1.2",
     "issuer": "https://as.aspsp.ob.forgerock.financial/oauth2",
     "authorization_endpoint": "https://as.aspsp.ob.forgerock.financial/oauth2/authorize",
@@ -241,7 +239,7 @@ Let's concentrate on the essentials claims for our tutorial:
 * `registration_endpoint`: The registration endpoint, very handy for this article as we are going to use now.
 * `scopes_supported`: A very useful one to checkout, as you may realise that the bank doesn't supports payments for example. May save you time if you are just interested in providing payment service and this bank is not offering those APIs yet.
 * `token_endpoint_auth_methods_supported`: List the different authentication that you will be able to use with this bank. The four mains one describe by Open Banking are:
-	* `client_secret_post` and `client_secret_basic`: Not recommended but still used by Open Banking, just to allow more flexibilities at the beginning. It's basically a password authentication. Main reason of not recommending it is if you compromise the password, well, it's not easy to get a new one. Passwordless is pretty cool and you will see that the two next one allows you to do that.
+	* `client_secret_post` and `client_secret_basic`: Not recommended but still used by Open Banking, just to allow more flexibilities at the beginning. It's basically a password authentication. Main reason of not recommending it is if you compromise the password, well, it's not easy to get a new one. Password-less is pretty cool and you will see that the two next one allows you to do that.
 	* `private_key_jwt`: The idea is to sign a JSON payload with your keys, and by agreeing on the payload of the JSON, this JWT becomes a form of ID (called client assertions). It's a nice usage of the signing concept to provide a way of authenticating people. We will see in more details how this work in this article.
 	* `tls_client_auth`: More standard in the industry but not very popular to developers, this method allows you authenticating using a certificate. Commonly called MATLS in the rest of the industry, this method consist of sending a client certificate as part of TLS connection.
 
@@ -322,8 +320,8 @@ Note: The ForgeRock directory is an online services that used MATLS to authentic
 The API is very simple, all you need to do is:
 
 ```
-curl -X POST \
-  https://matls.service.directory.ob.forgerock.financial/api/software-statement/current/ssa
+POST /api/software-statement/current/ssa HTTP/1.1
+Host: matls.service.directory.ob.forgerock.financial
 ```
 
 ```
@@ -344,8 +342,8 @@ Note: the JWKMS is an online service, which uses MATLS to authenticate you and s
 Before calling the JWKMS to sign our JSON, just one detail to sort up: Getting your software statement ID. The specification says that this JWS needs to be signed, using your software statement ID as an issuer ID. You can either go to the directory UI and get the software statement ID from there, or use again the directory APIs:
 
 ```
-curl -X GET \
-  https://matls.service.directory.ob.forgerock.financial/api/software-statement/current/
+GET /api/software-statement/current/ HTTP/1.1
+Host: matls.service.directory.ob.forgerock.financial
 ```
 
 ```
@@ -371,11 +369,12 @@ Plenty of information in this response but we will only keep the `id` for our ne
 For us today, we will use the JWKMS APIs. For signing our JSON payload, we call:
 
 ```
-curl -X POST \
-  https://jwkms.ob.forgerock.financial/api/crypto/signClaims \
-  -H 'Content-Type: application/json' \
-  -H 'issuerId: 707e6081-8ac2-43b8-9a9f-fa75bee22dc9' \
-  -d '{
+POST /api/crypto/signClaims HTTP/1.1
+Host: jwkms.ob.forgerock.financial
+Content-Type: application/json
+issuerId: 71a6b418-089b-47d7-ab31-703f7beca9fe
+
+{
   "exp": 1572787852.957,
   "scope": "openid accounts payments fundsconfirmations",
   "redirect_uris": [
@@ -397,7 +396,7 @@ curl -X POST \
   "request_object_signing_alg": "PS256",
   "request_object_encryption_alg": "RSA-OAEP-256",
   "request_object_encryption_enc": "A128CBC-HS256"
-}'
+}
 ```
 
 As a result:
@@ -413,10 +412,11 @@ Once you got the registration request in the right format and ready, sending the
 All you need to do is a POST to the bank dynamic registration request:
 
 ```
-curl -X POST \
-  https://matls.as.aspsp.ob.forgerock.financial/open-banking/register/ \
-  -H 'Content-Type: application/jwt' \
-  -d eyJraWQiOiIzODhiNjJjOTBlNzAzMDg4MjQwNTQ1ZjM2ZmNmMTRkM2Q2N2EwMTliIiwiYWxnIjoiUFMyNTYifQ.eyJ0b2tlbl9lbmRwb2ludF9hdXRoX3NpZ25pbmdfYWxnIjoiUFMyNTYiLCJyZXF1ZXN0X29iamVjdF9lbmNyeXB0aW9uX2FsZyI6IlJTQS1PQUVQLTI1NiIsImdyYW50X3R5cGVzIjpbImF1dGhvcml6YXRpb25fY29kZSIsInJlZnJlc2hfdG9rZW4iLCJjbGllbnRfY3JlZGVudGlhbHMiXSwic3ViamVjdF90eXBlIjoicGFpcndpc2UiLCJpc3MiOiI3MDdlNjA4MS04YWMyLTQzYjgtOWE5Zi1mYTc1YmVlMjJkYzkiLCJyZWRpcmVjdF91cmlzIjpbImh0dHBzOlwvXC93d3cuZ29vZ2xlLmNvbSJdLCJ0b2tlbl9lbmRwb2ludF9hdXRoX21ldGhvZCI6InRsc19jbGllbnRfYXV0aCIsInNvZnR3YXJlX3N0YXRlbWVudCI6ImV5SnJhV1FpT2lJd1lUTmxOR0poWXpWbU1UZzJPVEZsTlRjeE5HSmtOak0yWldZNFl6aGpZV0kyTW1KbFkyUTNJaXdpWVd4bklqb2lVRk15TlRZaWZRLmV5SnZjbWRmYW5kcmMxOWxibVJ3YjJsdWRDSTZJbFJQUkU4aUxDSnpiMlowZDJGeVpWOXRiMlJsSWpvaVZFVlRWQ0lzSW5OdlpuUjNZWEpsWDNKbFpHbHlaV04wWDNWeWFYTWlPbHRkTENKdmNtZGZjM1JoZEhWeklqb2lRV04wYVhabElpd2ljMjltZEhkaGNtVmZZMnhwWlc1MFgyNWhiV1VpT2lKR2IzSlVaWE4wWHpjd04yVTJNRGd4TFRoaFl6SXRORE5pT0MwNVlUbG1MV1poTnpWaVpXVXlNbVJqT1NJc0luTnZablIzWVhKbFgyTnNhV1Z1ZEY5cFpDSTZJamN3TjJVMk1EZ3hMVGhoWXpJdE5ETmlPQzA1WVRsbUxXWmhOelZpWldVeU1tUmpPU0lzSW1semN5STZJa1p2Y21kbFVtOWpheUlzSW5OdlpuUjNZWEpsWDJwM2EzTmZaVzVrY0c5cGJuUWlPaUpvZEhSd2N6cGNMMXd2YzJWeWRtbGpaUzVrYVhKbFkzUnZjbmt1YjJJdVptOXlaMlZ5YjJOckxtWnBibUZ1WTJsaGJEbzBORE5jTDJGd2FWd3ZjMjltZEhkaGNtVXRjM1JoZEdWdFpXNTBYQzgzTURkbE5qQTRNUzA0WVdNeUxUUXpZamd0T1dFNVppMW1ZVGMxWW1WbE1qSmtZemxjTDJGd2NHeHBZMkYwYVc5dVhDOXFkMnRmZFhKcElpd2ljMjltZEhkaGNtVmZhV1FpT2lJM01EZGxOakE0TVMwNFlXTXlMVFF6WWpndE9XRTVaaTFtWVRjMVltVmxNakprWXpraUxDSnZjbWRmWTI5dWRHRmpkSE1pT2x0ZExDSnZZbDl5WldkcGMzUnllVjkwYjNNaU9pSm9kSFJ3Y3pwY0wxd3ZaR2x5WldOMGIzSjVMbTlpTG1admNtZGxjbTlqYXk1bWFXNWhibU5wWVd3Nk5EUXpYQzkwYjNOY0x5SXNJbTl5WjE5cFpDSTZJalZqTkRWbU9ESmtZVGt6WWpjMU1ERXlOV00zWVdSbFlpSXNJbk52Wm5SM1lYSmxYMnh2WjI5ZmRYSnBJam9pYUhSMGNITTZYQzljTDJrdWNHOXpkR2x0Wnk1alkxd3ZhSFJvVVVOS2FGSmNMMlp5TFd4dloyOHRjM0YxWVhKbExURmpMV0pzWVdOckxuQnVaeUlzSW5OdlpuUjNZWEpsWDJwM2EzTmZjbVYyYjJ0bFpGOWxibVJ3YjJsdWRDSTZJbFJQUkU4aUxDSnpiMlowZDJGeVpWOXliMnhsY3lJNld5SkRRbEJKU1NJc0lsQkpVMUFpTENKRVFWUkJJaXdpUVVsVFVDSmRMQ0psZUhBaU9qRTFOekk0T1RJeE5qY3NJbTl5WjE5dVlXMWxJam9pUm05eVoyVlNiMk5ySWl3aWIzSm5YMnAzYTNOZmNtVjJiMnRsWkY5bGJtUndiMmx1ZENJNklsUlBSRThpTENKcFlYUWlPakUxTnpJeU9EY3pOamNzSW1wMGFTSTZJamMzTURVNU5EVTVMVGhrT0RZdE5EQXlOUzA1Wm1JeUxXSXdNakU0TkRGbE16TmpNeUo5LmMwcHJ3YWlMR0R2VVhPNEtVMXpUS1pFT05kQ013Y1dfeFpOa18zcTg1OGV6YVp0cHc0QVpGRUVJQVVOUGNoODltMy1XNFhMOTVjTlJQdGt2S2tiLUFfaFg2M2ZmeUFXdTFabEhzempQRFdnNXRBSFEtZm9zeE1CZmNoRkpIdE14cDBGVkhOWTVCSHBNV0R0VkFvc1NSRThvV0dzZVdEZGxEUW5BLUk4T3BOcUpaTFRIQlpyUmg0WEtMWWY3SHNVU3VkRzdMQzhiQmVoN0NlVk1oU1ltRURaRWFqNTJ0NFcwODdrbk05bFI0R1c2SFlPWGI4VVlwc2xKcTVqVHpNMkhuVnhwWFVXeW9rYk15QkxzSVZzYU9jOEg3YlhJSDhqVmxRdTdZUVh1QjJNN3JpWHRnaE02YTZPSGdVSmNScmhrUU40Rlo0NkdyQTJCUDc5S2JwWGkwUSIsInNjb3BlIjoib3BlbmlkIGFjY291bnRzIHBheW1lbnRzIGZ1bmRzY29uZmlybWF0aW9ucyIsInJlcXVlc3Rfb2JqZWN0X3NpZ25pbmdfYWxnIjoiUFMyNTYiLCJleHAiOjE1NzI3ODc4NTIsInJlcXVlc3Rfb2JqZWN0X2VuY3J5cHRpb25fZW5jIjoiQTEyOENCQy1IUzI1NiIsImlhdCI6MTU3Mjc4NzU2MiwianRpIjoiZGE0NDViZjQtOGY3My00MzRkLWFkMTctMWY0OGMyZTU1ZmY0IiwicmVzcG9uc2VfdHlwZXMiOlsiY29kZSBpZF90b2tlbiJdLCJpZF90b2tlbl9zaWduZWRfcmVzcG9uc2VfYWxnIjoiUFMyNTYifQ.PfHlB1k2wIsDiv9GgNX0nUHlZh5aVd0moJeMrL6mTZrrZNdGWvt1Vq0DKabImz51_maTMi3WIwkS7Y5CBGovozwig4MlTCiOO8nVP9UHK9JW28IEZqSUEU5b3OO26hdmFEJftTc_iyHiCxvq72zyhoJ0aYpgIkASyoBvkjP3X9Xf0scBYGxuo8S1cqVfS65AVHlFpJlug7QjGA1jGyAQVAAUDZ20W47gqXauVMqqXsOdHh_KQ8n0-hjVyVdPEj5JDS3-Rup5OC7d7EDRRoRoKfmyd5_9W2gSQw48D71cHlwlhZ3jmh4Ga5F30wKjeXd-Yn5_5F8my1z_-xstkS-d1A
+POST /open-banking/register/ HTTP/1.1
+Host: matls.as.aspsp.ob.forgerock.financial
+Content-Type: application/jwt
+
+eyJraWQiOiIzODhiNjJjOTBlNzAzMDg4MjQwNTQ1ZjM2ZmNmMTRkM2Q2N2EwMTliIiwiYWxnIjoiUFMyNTYifQ.eyJ0b2tlbl9lbmRwb2ludF9hdXRoX3NpZ25pbmdfYWxnIjoiUFMyNTYiLCJyZXF1ZXN0X29iamVjdF9lbmNyeXB0aW9uX2FsZyI6IlJTQS1PQUVQLTI1NiIsImdyYW50X3R5cGVzIjpbImF1dGhvcml6YXRpb25fY29kZSIsInJlZnJlc2hfdG9rZW4iLCJjbGllbnRfY3JlZGVudGlhbHMiXSwic3ViamVjdF90eXBlIjoicGFpcndpc2UiLCJpc3MiOiI3MDdlNjA4MS04YWMyLTQzYjgtOWE5Zi1mYTc1YmVlMjJkYzkiLCJyZWRpcmVjdF91cmlzIjpbImh0dHBzOlwvXC93d3cuZ29vZ2xlLmNvbSJdLCJ0b2tlbl9lbmRwb2ludF9hdXRoX21ldGhvZCI6InRsc19jbGllbnRfYXV0aCIsInNvZnR3YXJlX3N0YXRlbWVudCI6ImV5SnJhV1FpT2lJd1lUTmxOR0poWXpWbU1UZzJPVEZsTlRjeE5HSmtOak0yWldZNFl6aGpZV0kyTW1KbFkyUTNJaXdpWVd4bklqb2lVRk15TlRZaWZRLmV5SnZjbWRmYW5kcmMxOWxibVJ3YjJsdWRDSTZJbFJQUkU4aUxDSnpiMlowZDJGeVpWOXRiMlJsSWpvaVZFVlRWQ0lzSW5OdlpuUjNZWEpsWDNKbFpHbHlaV04wWDNWeWFYTWlPbHRkTENKdmNtZGZjM1JoZEhWeklqb2lRV04wYVhabElpd2ljMjltZEhkaGNtVmZZMnhwWlc1MFgyNWhiV1VpT2lKR2IzSlVaWE4wWHpjd04yVTJNRGd4TFRoaFl6SXRORE5pT0MwNVlUbG1MV1poTnpWaVpXVXlNbVJqT1NJc0luTnZablIzWVhKbFgyTnNhV1Z1ZEY5cFpDSTZJamN3TjJVMk1EZ3hMVGhoWXpJdE5ETmlPQzA1WVRsbUxXWmhOelZpWldVeU1tUmpPU0lzSW1semN5STZJa1p2Y21kbFVtOWpheUlzSW5OdlpuUjNZWEpsWDJwM2EzTmZaVzVrY0c5cGJuUWlPaUpvZEhSd2N6cGNMMXd2YzJWeWRtbGpaUzVrYVhKbFkzUnZjbmt1YjJJdVptOXlaMlZ5YjJOckxtWnBibUZ1WTJsaGJEbzBORE5jTDJGd2FWd3ZjMjltZEhkaGNtVXRjM1JoZEdWdFpXNTBYQzgzTURkbE5qQTRNUzA0WVdNeUxUUXpZamd0T1dFNVppMW1ZVGMxWW1WbE1qSmtZemxjTDJGd2NHeHBZMkYwYVc5dVhDOXFkMnRmZFhKcElpd2ljMjltZEhkaGNtVmZhV1FpT2lJM01EZGxOakE0TVMwNFlXTXlMVFF6WWpndE9XRTVaaTFtWVRjMVltVmxNakprWXpraUxDSnZjbWRmWTI5dWRHRmpkSE1pT2x0ZExDSnZZbDl5WldkcGMzUnllVjkwYjNNaU9pSm9kSFJ3Y3pwY0wxd3ZaR2x5WldOMGIzSjVMbTlpTG1admNtZGxjbTlqYXk1bWFXNWhibU5wWVd3Nk5EUXpYQzkwYjNOY0x5SXNJbTl5WjE5cFpDSTZJalZqTkRWbU9ESmtZVGt6WWpjMU1ERXlOV00zWVdSbFlpSXNJbk52Wm5SM1lYSmxYMnh2WjI5ZmRYSnBJam9pYUhSMGNITTZYQzljTDJrdWNHOXpkR2x0Wnk1alkxd3ZhSFJvVVVOS2FGSmNMMlp5TFd4dloyOHRjM0YxWVhKbExURmpMV0pzWVdOckxuQnVaeUlzSW5OdlpuUjNZWEpsWDJwM2EzTmZjbVYyYjJ0bFpGOWxibVJ3YjJsdWRDSTZJbFJQUkU4aUxDSnpiMlowZDJGeVpWOXliMnhsY3lJNld5SkRRbEJKU1NJc0lsQkpVMUFpTENKRVFWUkJJaXdpUVVsVFVDSmRMQ0psZUhBaU9qRTFOekk0T1RJeE5qY3NJbTl5WjE5dVlXMWxJam9pUm05eVoyVlNiMk5ySWl3aWIzSm5YMnAzYTNOZmNtVjJiMnRsWkY5bGJtUndiMmx1ZENJNklsUlBSRThpTENKcFlYUWlPakUxTnpJeU9EY3pOamNzSW1wMGFTSTZJamMzTURVNU5EVTVMVGhrT0RZdE5EQXlOUzA1Wm1JeUxXSXdNakU0TkRGbE16TmpNeUo5LmMwcHJ3YWlMR0R2VVhPNEtVMXpUS1pFT05kQ013Y1dfeFpOa18zcTg1OGV6YVp0cHc0QVpGRUVJQVVOUGNoODltMy1XNFhMOTVjTlJQdGt2S2tiLUFfaFg2M2ZmeUFXdTFabEhzempQRFdnNXRBSFEtZm9zeE1CZmNoRkpIdE14cDBGVkhOWTVCSHBNV0R0VkFvc1NSRThvV0dzZVdEZGxEUW5BLUk4T3BOcUpaTFRIQlpyUmg0WEtMWWY3SHNVU3VkRzdMQzhiQmVoN0NlVk1oU1ltRURaRWFqNTJ0NFcwODdrbk05bFI0R1c2SFlPWGI4VVlwc2xKcTVqVHpNMkhuVnhwWFVXeW9rYk15QkxzSVZzYU9jOEg3YlhJSDhqVmxRdTdZUVh1QjJNN3JpWHRnaE02YTZPSGdVSmNScmhrUU40Rlo0NkdyQTJCUDc5S2JwWGkwUSIsInNjb3BlIjoib3BlbmlkIGFjY291bnRzIHBheW1lbnRzIGZ1bmRzY29uZmlybWF0aW9ucyIsInJlcXVlc3Rfb2JqZWN0X3NpZ25pbmdfYWxnIjoiUFMyNTYiLCJleHAiOjE1NzI3ODc4NTIsInJlcXVlc3Rfb2JqZWN0X2VuY3J5cHRpb25fZW5jIjoiQTEyOENCQy1IUzI1NiIsImlhdCI6MTU3Mjc4NzU2MiwianRpIjoiZGE0NDViZjQtOGY3My00MzRkLWFkMTctMWY0OGMyZTU1ZmY0IiwicmVzcG9uc2VfdHlwZXMiOlsiY29kZSBpZF90b2tlbiJdLCJpZF90b2tlbl9zaWduZWRfcmVzcG9uc2VfYWxnIjoiUFMyNTYifQ.PfHlB1k2wIsDiv9GgNX0nUHlZh5aVd0moJeMrL6mTZrrZNdGWvt1Vq0DKabImz51_maTMi3WIwkS7Y5CBGovozwig4MlTCiOO8nVP9UHK9JW28IEZqSUEU5b3OO26hdmFEJftTc_iyHiCxvq72zyhoJ0aYpgIkASyoBvkjP3X9Xf0scBYGxuo8S1cqVfS65AVHlFpJlug7QjGA1jGyAQVAAUDZ20W47gqXauVMqqXsOdHh_KQ8n0-hjVyVdPEj5JDS3-Rup5OC7d7EDRRoRoKfmyd5_9W2gSQw48D71cHlwlhZ3jmh4Ga5F30wKjeXd-Yn5_5F8my1z_-xstkS-d1A
   ```
 
 As a result:
