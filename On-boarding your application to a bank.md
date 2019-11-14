@@ -35,7 +35,7 @@ Cool fact: the directory also offers APIs, we will be able to do the same things
 
 You can complete the entire form but if you feel a bit lazy like me, just complete the essential:
 * Name: It will displayed in the consent screen, it's nice to show a friendly name than a blank
-* redirect URIs: we don't want to host an app for exploring Open Banking, we are going to use google. Put https://google.com
+* redirect URIs: we don't want to host an app for exploring Open Banking, we are going to use google. Put `https://google.com`
 * logo: It's also display in the consent. You can use ours for the exercise if you like. 
 
 
