@@ -174,6 +174,7 @@ As a response:
 }
 ```
 
+**Postman: ** You can find this request in the ForgeRock Postman collection under `Accounts flow` > `Data access` > `Account API V3.1` > `Get transactions`. The link from the online documentation directly to this request is https://postman.ob.forgerock.financial/?version=latest#e3a62f97-828b-4b02-b239-e8b7ac6247e3
 
 You get the list of transactions in a JSON array, paginated.
 The `links` section is a helper to guide you on how to navigate between pages. You will notice that behind the scene, there is just a `page` GET parameter. 
@@ -240,6 +241,8 @@ As a response:
 }
 ```
 
+**Postman: ** You can find this request in the ForgeRock Postman collection under `Accounts flow` > `Data access` > `Account API V3.1` > `Get accounts`. The link from the online documentation directly to this request is https://postman.ob.forgerock.financial/?version=latest#388b6997-a527-46d8-a131-1c2743efc639
+
 
 You can now filter the transactions for the account `09000792-bd62-4348-a62d-e7d75f0fca3c`:
 
@@ -257,6 +260,8 @@ Accept: application/json
 ```
 
 *The response is exactly in the same format that the bulk and for avoiding you to scroll too much, I won't print it.*
+
+**Postman: ** You can find this request in the ForgeRock Postman collection under `Accounts flow` > `Data access` > `Account API V3.1` > `Get account -> transactions`. The link from the online documentation directly to this request is https://postman.ob.forgerock.financial/?version=latest#97de302e-88b0-48e8-a32a-060f602657c9
 
 ## Filter transactions by statement
 
@@ -323,6 +328,7 @@ Accept: application/json
 
 *The response is also similar than the bulk so I won't print it here.*
 
+**Postman: ** You can find this request in the ForgeRock Postman collection under `Accounts flow` > `Data access` > `Account API V3.1` > `Get account -> Statement -> Transactions`. The link from the online documentation directly to this request is https://postman.ob.forgerock.financial/?version=latest#8efc7b6a-10c3-4cb0-ba22-933d95ee81e7
 
 ## Conclusion
 

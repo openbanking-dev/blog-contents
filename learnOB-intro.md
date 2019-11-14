@@ -104,7 +104,7 @@ You can do it during a payment, which is handy, or you can just do it any point 
 
 ## Conclusion
 
-Still here? Time for your Open Banking dinner. Bon appétit!
+Still here? Time for to explore Open Banking. Bon appétit!
 
 
 

@@ -1,8 +1,8 @@
 # Overview of the Open Banking APIs.
 
-*This article is part of a set of tutorial about Open Banking UK.If you are interested to learn about Open Banking UK, you may want to check-out first our intro article.*
+*This article is part of a set of tutorial about Open Banking UK. If you are interested to learn about it from the beginning, you may want to check-out our first intro article.*
 
-Before going into a deep dive into how works Open Banking UK, let's talk first about the APIs and what they have to offer to you.
+Before going into a deep dive in the next articles into how Open Banking UK works, let's talk about the APIs and what they have to offer to you.
 
 There are four different types of APIs:
 * Account and Transaction

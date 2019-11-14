@@ -24,9 +24,9 @@ For simplicity, we are going to take the account and transactions APIs example. 
 
 The first step is to prepare the consent access. Only you and the bank is involved in that process. This consist of creating a consent object into the bank. Inside this consent, you will put the permissions you wish to access and some optional informations like the expiration of the consent.
 
-The bank is protecting their endpoints with OAuth2, even the consent creation endpoint, meaning you will need an access token to create the consent object.
-There are different grant flows in OAuth2, we are going to see two of them today. The one that interest us for the consent creation is the client credential grant flow.
-If you are familiar with this standard, as a developer, you are the OAuth2 client and you want to create a resources that you will own. For that, you need to use the client credential grant flow.
+The bank is protecting their endpoints with OAuth 2, even the consent creation endpoint, meaning you will need an access token to create the consent object.
+There are different grant flows in OAuth 2, we are going to see two of them today. The one that interest us for the consent creation is the client credential grant flow.
+If you are familiar with this standard, as a developer, you are the OAuth 2 client and you want to create a resources that you will own. For that, you need to use the client credential grant flow.
 This flow will not be covered in details in this tutorial, we will concentrate on showing how to use it.
 
 To create the access token:
@@ -47,6 +47,8 @@ As a response:
     "scope": "accounts"
 }
 ```
+
+**Postman: ** You can find this request in the ForgeRock Postman collection under `Accounts flow` > `Access preparation` > `‌Client credential`. The link from the online documentation directly to this request is https://postman.ob.forgerock.financial/?version=latest#21dcd60b-4a78-4523-8a29-ac2677fbb37c
 
 It uses the `tls_client_auth` auth method to authenticate yourself to the bank, via your client certificate. It is why only you can get this access token.
 
@@ -116,6 +118,8 @@ As a response:
     "Risk": {}
 }
 ```
+
+**Postman: ** You can find this request in the ForgeRock Postman collection under `Accounts flow` > `Access preparation` > `‌create account request`. The link from the online documentation directly to this request is https://postman.ob.forgerock.financial/?version=latest#60789eff-af9e-4f61-8577-5278544630fb
 
 The bank will return to you the consent object you created. It's why you will see the same claims that you requested.
 Although, the bank added a few new one in the response, that are going to be important for the rest of the tutorial:
@@ -225,6 +229,7 @@ As a result:
 eyJraWQiOiIyYTNmM2I3ZWQ3MTc0M2FiM2UzNzJkYTk2Y2FiZmJiMzYzZmM5MmQ3IiwiYWxnIjoiUFMyNTYifQ.eyJhdWQiOiJodHRwczpcL1wvYXMuYXNwc3Aub2IuZm9yZ2Vyb2NrLmZpbmFuY2lhbFwvb2F1dGgyIiwic2NvcGUiOiJvcGVuaWQgYWNjb3VudHMiLCJpc3MiOiI2NzhjNGNjMS0xMmU0LTRjODItODRmZC03M2NiZjYwOTUzNWEiLCJjbGFpbXMiOnsiaWRfdG9rZW4iOnsiYWNyIjp7InZhbHVlIjoidXJuOm9wZW5iYW5raW5nOnBzZDI6c2NhIiwiZXNzZW50aWFsIjp0cnVlfSwib3BlbmJhbmtpbmdfaW50ZW50X2lkIjp7InZhbHVlIjoiQUFDXzYxNjM5NWFkLWVmYjItNDg3NS04NWQ5LWI2M2EzNDU4NmYyZSIsImVzc2VudGlhbCI6dHJ1ZX19LCJ1c2VyaW5mbyI6eyJvcGVuYmFua2luZ19pbnRlbnRfaWQiOnsidmFsdWUiOiJBQUNfNjE2Mzk1YWQtZWZiMi00ODc1LTg1ZDktYjYzYTM0NTg2ZjJlIiwiZXNzZW50aWFsIjp0cnVlfX19LCJyZXNwb25zZV90eXBlIjoiY29kZSBpZF90b2tlbiIsInJlZGlyZWN0X3VyaSI6Imh0dHBzOlwvXC93d3cuZ29vZ2xlLmNvbSIsInN0YXRlIjoiMTBkMjYwYmYtYTdkOS00NDRhLTkyZDktN2I3YTVmMDg4MjA4IiwiZXhwIjoxNTczNDExODU5LCJub25jZSI6IjEwZDI2MGJmLWE3ZDktNDQ0YS05MmQ5LTdiN2E1ZjA4ODIwOCIsImlhdCI6MTU3MzQxMDk2NSwiY2xpZW50X2lkIjoiNjc4YzRjYzEtMTJlNC00YzgyLTg0ZmQtNzNjYmY2MDk1MzVhIiwianRpIjoiOGEwYTI0MGMtN2ZhNS00MjdlLWIyZjQtZTkwMTE1ZGI4MDcyIn0.TMvSWvEWnbqngrQfU-KOrW9-iUdMBegYN8fNxVy7TNazr5zgY0tmcFYYcyrb0eIGVlLlmm4_gBlEDt5h57Q8LJlrkrKQFNlELaCMeLZAhR19d5eGJB3XdzGH8-lJYeLwl96V1K-lvVvTQ_L8qaFWY8NQeRGbC5fsiYBlL9vZdbXVPHqpQRLXmL-1N2n452VJYiyKT0UGO1K64QBY91zacdMnRp_8zyGiHddRH7FOp2OsUfiR_ldNaVeICcERh6AYVvxTVoCairSM8DECd6B1n06s5HC-F1Zm4KqAqqSiT42tQ9z_gAPDwPEGBAkS-rH6oHY004Rkx8dMiji7NRjktg
 ```
 
+**Postman: ** You can find this request in the ForgeRock Postman collection under `Accounts flow` > `Auth & Consent` > `‌Generate request parameter`. The link from the online documentation directly to this request is https://postman.ob.forgerock.financial/?version=latest#daf4e107-1f99-4edd-8b22-5156fbe0cf55
 
 Now that you got the request parameter ready, you need to build the redirection url for the user needs to follow.
 For that, you need to know which url from the bank to use. This information can be find in the response of the bank AS discovery endpoint.
@@ -237,6 +242,9 @@ The OIDC standards requires you to build the URI a certain way, for security rea
 ```
 https://as.aspsp.ob.forgerock.financial/oauth2/authorize?response_type=code%20id_token&client_id=678c4cc1-12e4-4c82-84fd-73cbf609535a&state=10d260bf-a7d9-444a-92d9-7b7a5f088208&redirect_uri=https://www.google.com&nonce=10d260bf-a7d9-444a-92d9-7b7a5f088208&scope=openid%20accounts&request=eyJraWQiOiIyYTNmM2I3ZWQ3MTc0M2FiM2UzNzJkYTk2Y2FiZmJiMzYzZmM5MmQ3IiwiYWxnIjoiUFMyNTYifQ.eyJhdWQiOiJodHRwczpcL1wvYXMuYXNwc3Aub2IuZm9yZ2Vyb2NrLmZpbmFuY2lhbFwvb2F1dGgyIiwic2NvcGUiOiJvcGVuaWQgYWNjb3VudHMiLCJpc3MiOiI2NzhjNGNjMS0xMmU0LTRjODItODRmZC03M2NiZjYwOTUzNWEiLCJjbGFpbXMiOnsiaWRfdG9rZW4iOnsiYWNyIjp7InZhbHVlIjoidXJuOm9wZW5iYW5raW5nOnBzZDI6c2NhIiwiZXNzZW50aWFsIjp0cnVlfSwib3BlbmJhbmtpbmdfaW50ZW50X2lkIjp7InZhbHVlIjoiQUFDXzYxNjM5NWFkLWVmYjItNDg3NS04NWQ5LWI2M2EzNDU4NmYyZSIsImVzc2VudGlhbCI6dHJ1ZX19LCJ1c2VyaW5mbyI6eyJvcGVuYmFua2luZ19pbnRlbnRfaWQiOnsidmFsdWUiOiJBQUNfNjE2Mzk1YWQtZWZiMi00ODc1LTg1ZDktYjYzYTM0NTg2ZjJlIiwiZXNzZW50aWFsIjp0cnVlfX19LCJyZXNwb25zZV90eXBlIjoiY29kZSBpZF90b2tlbiIsInJlZGlyZWN0X3VyaSI6Imh0dHBzOlwvXC93d3cuZ29vZ2xlLmNvbSIsInN0YXRlIjoiMTBkMjYwYmYtYTdkOS00NDRhLTkyZDktN2I3YTVmMDg4MjA4IiwiZXhwIjoxNTczNDExODU5LCJub25jZSI6IjEwZDI2MGJmLWE3ZDktNDQ0YS05MmQ5LTdiN2E1ZjA4ODIwOCIsImlhdCI6MTU3MzQxMDk2NSwiY2xpZW50X2lkIjoiNjc4YzRjYzEtMTJlNC00YzgyLTg0ZmQtNzNjYmY2MDk1MzVhIiwianRpIjoiOGEwYTI0MGMtN2ZhNS00MjdlLWIyZjQtZTkwMTE1ZGI4MDcyIn0.TMvSWvEWnbqngrQfU-KOrW9-iUdMBegYN8fNxVy7TNazr5zgY0tmcFYYcyrb0eIGVlLlmm4_gBlEDt5h57Q8LJlrkrKQFNlELaCMeLZAhR19d5eGJB3XdzGH8-lJYeLwl96V1K-lvVvTQ_L8qaFWY8NQeRGbC5fsiYBlL9vZdbXVPHqpQRLXmL-1N2n452VJYiyKT0UGO1K64QBY91zacdMnRp_8zyGiHddRH7FOp2OsUfiR_ldNaVeICcERh6AYVvxTVoCairSM8DECd6B1n06s5HC-F1Zm4KqAqqSiT42tQ9z_gAPDwPEGBAkS-rH6oHY004Rkx8dMiji7NRjktg
 ```
+
+**Postman: ** You can find this request in the ForgeRock Postman collection under `Accounts flow` > `Auth & Consent` > `Hybrid flow`. The link from the online documentation directly to this request is https://postman.ob.forgerock.financial/?version=latest#dbc709ae-618f-458f-91b5-563d84c76acf
+This one is a bit different than the other Postman example. You just need to build the URI, not execute it in Postman. We still use a Postman request, as a way to help you preparing the request to send to Alice. You need to click on 'code' on the top right, then select 'curl' and copy the URL. 
 
 You need now to redirect the user to this URI with a simple 302.
 
@@ -351,6 +359,7 @@ As a response:
 }
 ```
 
+**Postman: ** You can find this request in the ForgeRock Postman collection under `Accounts flow` > `Token exchange` > `Exchange code`. The link from the online documentation directly to this request is https://postman.ob.forgerock.financial/?version=latest#37f94052-2042-4978-9b56-8a7ee9edbfd7
 
 For now, the claim that interest us is the `access_token`. It is a token you need to store securely. It has a short time life. This is why you receive as well a refresh_token that allows you to regenerate an access token from it.
 We will see in a future article how to use the refresh token. For now, let's use our access token!
@@ -432,6 +441,8 @@ As a result:
     }
 }
 ```
+
+**Postman: ** You can find this request in the ForgeRock Postman collection under `Accounts flow` > `Data access` > `Account API V3.1` > `Get accounts`. The link from the online documentation directly to this request is https://postman.ob.forgerock.financial/?version=latest#388b6997-a527-46d8-a131-1c2743efc639
 
 You can use this access token to other endpoints the same way.
 We will see in the next article how to use it to retrieve transactions.
