@@ -1,4 +1,4 @@
-# Making Open Banking Payments
+# Making Open Banking UK Payments
 
 *This article is part of a set of tutorial about Open Banking UK, although, they are all written to be read as a standalone article. If you are interested in learning about Open Banking UK from the beginning, you may want to start by our intro article.*
 

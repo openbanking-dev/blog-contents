@@ -1,6 +1,6 @@
 # On-boarding your application to the bank
 
-*This article is part of a set of tutorial about Open Banking UK, although, they are all written to be read as a standalone article. If you are interested in learning about Open Banking UK, you may want to start by our intro article.*
+*This article is part of a set of tutorial about Open Banking UK, although, they are all written to be ready as a standalone article. If you are interested in learning about Open Banking UK, you may want to start by our intro article.*
 
 In order to use the Open Banking APIs, you will need to register your application to each of the banks. We will see in this article how the on-boarding process with each bank works.
 

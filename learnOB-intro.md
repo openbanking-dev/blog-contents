@@ -24,11 +24,12 @@ We will take the angle of the developer using the APIs for this set of articles.
 
 We will try to not use the specification vocabularies, as it doesn't make things easy at the beginning.
 Although, it is best we do introduce some of it now, in case you end up checking the specification and want to do the correlation with those tutorials:
-* TPP: Third Party Provider. It's you, the developer
-* ASPSP: Account Servicing Payment Service Provider, it's the bank!
-* AS: Authorisation Server, it's the bank as well, just the authorisation bit of it.
-* RS: Resource Server, it's also the bank! It's a generic term to designate the party storing the resources.
-* PSU: Payment Services User. It's the bank customer that is owning the data. It's the user basically
+
+- TPP: Third Party Provider. It's you, the developer
+- ASPSP: Account Servicing Payment Service Provider, it's the bank!
+- AS: Authorisation Server, it's the bank as well, just the authorisation bit of it.
+- RS: Resource Server, it's also the bank! It's a generic term to designate the party storing the resources.
+- PSU: Payment Services User. It's the bank customer that is owning the data. It's the user basically
 
 If you are interested to have a lot more glossary, the one from the standard is pretty good: https://www.openbanking.org.uk/about-us/glossary/
 
@@ -104,7 +105,7 @@ You can do it during a payment, which is handy, or you can just do it any point 
 
 ## Conclusion
 
-Still here? Time for to explore Open Banking. Bon appétit!
+Time for to explore Open Banking UK APIS! Bon appétit!
 
 
 

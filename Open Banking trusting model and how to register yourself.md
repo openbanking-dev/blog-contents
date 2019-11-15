@@ -1,4 +1,4 @@
-# Open Banking trusting model and how to register yourself
+# Open Banking UK trusting model and how to register yourself
 
 *This article is part of a set of tutorial about Open Banking UK.If you are interested to learn about Open Banking UK, you may want to check-out first our intro article.*
 

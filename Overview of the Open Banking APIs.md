@@ -1,14 +1,15 @@
-# Overview of the Open Banking APIs.
+# Overview of the Open Banking UK APIs.
 
 *This article is part of a set of tutorial about Open Banking UK. If you are interested to learn about it from the beginning, you may want to check-out our first intro article.*
 
 Before going into a deep dive in the next articles into how Open Banking UK works, let's talk about the APIs and what they have to offer to you.
 
 There are four different types of APIs:
-* Account and Transaction
-* Payments
-* Event notification
-* Confirmation of funds
+
+- Account and Transaction
+- Payments
+- Event notification
+- Confirmation of funds
 
 ## Account and Transaction
 
@@ -17,19 +18,19 @@ Those APIs will cover the access to all the user financial data.
 I usually compare them with my bank web portal. Basically, everything you can retrieve from your bank portal, you will _pretty much_ be able to access them via APIs.
 
 Here is the list of the APIs:
-* Get accounts
-* Get account
-* Get balances
-* Get transactions
-* Get beneficiaries
-* Get direct-debits
-* Get product
-* Get standing-orders
-* Get party
-* Get offers
-* Get scheduled-payments
-* Get statements
-* Get statement transactions
+- Get accounts
+- Get account
+- Get balances
+- Get transactions
+- Get beneficiaries
+- Get direct-debits
+- Get product
+- Get standing-orders
+- Get party
+- Get offers
+- Get scheduled-payments
+- Get statements
+- Get statement transactions
 
 As you can notice, they are all `Get` APIs, meaning you got a read access privilege. It's kind of expected for some of them, don't think you ever imagine you could create transactions!
 Although for APIs like standing orders, you may have wish a way to create new one. It's actually covered by the payment APIs.
@@ -37,8 +38,8 @@ Although for APIs like standing orders, you may have wish a way to create new on
 
 Before we got in the details of each APIs, let explain the concept of bulk.
 Some APIs will offer you two modes: Data for a specific account or for all accounts: the last one is called bulk. The easiest is to take an example, the `Get transactions`.
-* You can request the transactions for a specific account
-* You can request the transaction for all the accounts at the same time -> Bulk
+- You can request the transactions for a specific account
+- You can request the transaction for all the accounts at the same time -> Bulk
 
 They could have designed the APIs to take an account id in the GET parameters. Instead, they choose to define the account id in the path. It's no big deal, just thought you needed to be aware of it, as it creates this concept of `bulk`.
 What is good for us is the fact that the output formats of the two modes, are the same. 
@@ -713,9 +714,9 @@ GET /open-banking/v3.1.1/aisp/accounts/12a03d84-1a34-46c6-acd1-53065e80d282/stat
 
 The payments APIs offers you to trigger payments from the user account.
 There are different kinds of payments:
-* Domestic
-* International
-* File payments
+- Domestic
+- International
+- File payments
 
 Domestic and international payments share some similarity.
 In particular, they both offers single payments, schedule payment and standing orders.
@@ -726,9 +727,9 @@ A domestic payment is a payment in the same currency, as opposed to an internati
 
 Domestic payment offers three kind of payments:
 
-* single payments
-* schedule payment
-* standing orders
+- single payments
+- schedule payment
+- standing orders
 
 
 _They are pretty self explanatory. To illustrate, I will only give you the payment consent request payload for now. How works payment would be details in a dedicated article.

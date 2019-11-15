@@ -281,6 +281,7 @@ x-fapi-interaction-id: 93bac548-d2de-4546-b106-880a5018460d
 Accept: application/json
 ```
 As a response:
+
 ```
 {
     "Data": {
