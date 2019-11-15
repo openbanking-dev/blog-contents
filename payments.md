@@ -4,25 +4,7 @@
 
 *If you wish to execute the request at the same than the article, please note that it assumes you are already onboard. If it is not your case, please follow the article X*
 
-## Why make payments via Open Banking
-
-### Security
-*Q comment: more something to put in the security flow introduction*
-
-- Screen scraping / User credentials - The old insecure way, giving away full access
-- Security - Trust between developers and bank, audit
-- Consent - Limit scope of access, single payment authorisation
-
-### Accessibility
-*Q comment: more something to put in the intro*
-- API consistency - Access to all banks
-- Level playing field to developer against OB APIs
-
-### UX
-*Q comment: more something to put in the intro*
-
-- Consistent user experience regardless of bank UX
-- Innovation with new ways to pay
+In this article, we will see how to consume the payments APIs. If you haven't follow yet the security flow article, I recommend strongly to have a read at it first. We will base this article on it and concentrate on the differences.
 
 ## Types Of Payments
 
@@ -55,13 +37,13 @@ So before describing how we go about making a payment, let's see an example. In 
 2. The shop creates initiates the payment by creating a payment request or consent in other words.
 3. After creating the consent, the shop redirects Alice to her bank.
   ![Consent](https://i.imgur.com/K3iWGtr.png)
-
 4. Alice will login to her bank, review payment and approve it.
 5. Alice is redirected back to the shop with an exchange code
 6. The shop uses the exchange code to get an access token
 7. The shop will submit the payment
+  
   ![Submit Payment](https://i.imgur.com/7mEaouy.png)
-
+  
 ### Pre-requistes
 
 *Q comment: We can point to the trust model article*
