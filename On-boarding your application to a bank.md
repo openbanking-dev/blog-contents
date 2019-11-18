@@ -24,19 +24,21 @@ Start by clicking on `Create a new software statement`.
 
 
 You will see on the top that there are a few tabs:
-* General: it's the global information of your application
-* Transport/Signing/Encryption keys: cryptography is fundamental for Open Banking. This is the section where you will get your tests keys.
-* Software Statement Assertions (SSA): It's your financial passport if you like. It is a JSON signed (JWS) by the directory, that will attest that you are part of the circle of trust. This tab allows you to generate a new SSA on demand.
-* On Boarding: the directory can onboard for you to the ForgeRock bank. Although, we kind of want how the on-boarding works so we are going to do that manually.
+
+- `General`: it's the global information of your application
+- `Transport/Signing/Encryption keys`: cryptography is fundamental for Open Banking. This is the section where you will get your tests keys.
+- `Software Statement Assertions (SSA)`: It's your financial passport if you like. It is a JSON signed (JWS) by the directory, that will attest that you are part of the circle of trust. This tab allows you to generate a new SSA on demand.
+- `On Boarding`: the directory can onboard for you to the ForgeRock bank. Although, we kind of want how the on-boarding works so we are going to do that manually.
 
 Cool fact: the directory also offers APIs, we will be able to do the same things with the APIs than the UI. Very handy especially for generating a new SSA.
 
 #### General
 
 You can complete the entire form but if you feel a bit lazy like me, just complete the essential:
-* Name: It will displayed in the consent screen, it's nice to show a friendly name than a blank
-* redirect URIs: we don't want to host an app for exploring Open Banking, we are going to use google. Put `https://google.com`
-* logo: It's also display in the consent. You can use ours for the exercise if you like. 
+
+- `Name`: It will displayed in the consent screen, it's nice to show a friendly name than a blank
+- `redirect URIs`: we don't want to host an app for exploring Open Banking, we are going to use google. Put `https://google.com`
+- `logo`: It's also display in the consent. You can use ours for the exercise if you like. 
 
 
 #### Transport/Signing/Encryption keys
@@ -237,15 +239,17 @@ Host: as.aspsp.ob.forgerock.financial
 It's a lot, probably too much information to go through now.
 Please refer to the standard to get all the details about all the claims but you don't need to do that now.
 Let's concentrate on the essentials claims for our tutorial:
-* `issuer`: it's the id to use when referring to the bank, when signing/receiving messages from it. Doing the analogy with sending a postcard, basically it's like the official name to put in a letter, if you wanted to send it to the bank. It's also the name you will see in a message you received from the bank. You will be able to tell that this message from the bank A this way.
-* `authorization_endpoint`: we will need to redirect the user to the bank at some point. It's this endpoint that the bank is telling us to redirect the user to when requesting the user authorisation.
-* `token_endpoint`: The token endpoint will be useful for us, to retrieve an access token. 
-* `registration_endpoint`: The registration endpoint, very handy for this article as we are going to use now.
-* `scopes_supported`: A very useful one to checkout, as you may realise that the bank doesn't supports payments for example. May save you time if you are just interested in providing payment service and this bank is not offering those APIs yet.
-* `token_endpoint_auth_methods_supported`: List the different authentication that you will be able to use with this bank. The four mains one describe by Open Banking are:
-	* `client_secret_post` and `client_secret_basic`: Not recommended but still used by Open Banking, just to allow more flexibilities at the beginning. It's basically a password authentication. Main reason of not recommending it is if you compromise the password, well, it's not easy to get a new one. Password-less is pretty cool and you will see that the two next one allows you to do that.
-	* `private_key_jwt`: The idea is to sign a JSON payload with your keys, and by agreeing on the payload of the JSON, this JWT becomes a form of ID (called client assertions). It's a nice usage of the signing concept to provide a way of authenticating people. We will see in more details how this work in this article.
-	* `tls_client_auth`: More standard in the industry but not very popular to developers, this method allows you authenticating using a certificate. Commonly called MATLS in the rest of the industry, this method consist of sending a client certificate as part of TLS connection.
+
+- `issuer`: it's the id to use when referring to the bank, when signing/receiving messages from it. Doing the analogy with sending a postcard, basically it's like the official name to put in a letter, if you wanted to send it to the bank. It's also the name you will see in a message you received from the bank. You will be able to tell that this message from the bank A this way.
+- `authorization_endpoint`: we will need to redirect the user to the bank at some point. It's this endpoint that the bank is telling us to redirect the user to when requesting the user authorisation.
+- `token_endpoint`: The token endpoint will be useful for us, to retrieve an access token. 
+- `registration_endpoint`: The registration endpoint, very handy for this article as we are going to use now.
+- `scopes_supported`: A very useful one to checkout, as you may realise that the bank doesn't supports payments for example. May save you time if you are just interested in providing payment service and this bank is not offering those APIs yet.
+- `token_endpoint_auth_methods_supported`: List the different authentication that you will be able to use with this bank. The four mains one describe by Open Banking are:
+
+	- `client_secret_post` and `client_secret_basic`: Not recommended but still used by Open Banking, just to allow more flexibilities at the beginning. It's basically a password authentication. Main reason of not recommending it is if you compromise the password, well, it's not easy to get a new one. Password-less is pretty cool and you will see that the two next one allows you to do that.
+	- `private_key_jwt`: The idea is to sign a JSON payload with your keys, and by agreeing on the payload of the JSON, this JWT becomes a form of ID (called client assertions). It's a nice usage of the signing concept to provide a way of authenticating people. We will see in more details how this work in this article.
+	- `tls_client_auth`: More standard in the industry but not very popular to developers, this method allows you authenticating using a certificate. Commonly called MATLS in the rest of the industry, this method consist of sending a client certificate as part of TLS connection.
 
 
 ##### Which authentication method to use?
@@ -253,10 +257,11 @@ Let's concentrate on the essentials claims for our tutorial:
 It's nice to have the choice but which one should you use? First, it's important to note that as some banks would not support all of the authentication methods yet, you probably to end up supporting all of them, just so you can consume all the banks APIs available.
 The question becomes, once you support all the methods, what is the preferred order of the authentication methods?
 If I had to say, here is the order I would say for Open Banking:
-* tls_client_auth
-* private_key_jwt
-* client_secret_basic
-* client_secret_post
+
+- `tls_client_auth`
+- `private_key_jwt`
+- `client_secret_basic`
+- `client_secret_post`
 
 I would choose `tls_client_auth` first, as for Open Banking you need to setup your client certificates anyway, this one is the most convenient for you.
 
@@ -267,6 +272,7 @@ Coming back to on boarding, let's talk about the registration request.
 The dynamic registration request takes as a payload a JWS, which is a JSON signed.
 
 The format of this JSON is standardise by two standards:
+
 - OIDC dynamic registration https://openid.net/specs/openid-connect-registration-1_0.html
 - OAuth 2 dynamic registration https://tools.ietf.org/html/rfc7591
 
@@ -302,18 +308,19 @@ For this article, we are going to use the following JSON as a base line:
 
 
 Lets describe the essential claims of this JSON:
-* `exp`: It's the expiration time of your JWS. For security reason, it's good to keep it short. No real reason to having it valid for days, when you are going to consume it just after creating it.
-* `scope`: it's the list of scopes you are requesting. Scopes allow you to access specific kind of resources. 
-	* `openid`: this one just need to be there, to say we are going to use not only OAuth 2 but also OpenID. 
-	* `accounts`: required to access accounts APIs
-	* `payments`: required to access payments APIs.
-	* `fundsconfirmations`: required to access confirmation of funds APIs.
+
+- `exp`: It's the expiration time of your JWS. For security reason, it's good to keep it short. No real reason to having it valid for days, when you are going to consume it just after creating it.
+- `scope`: it's the list of scopes you are requesting. Scopes allow you to access specific kind of resources. 
+	- `openid`: this one just need to be there, to say we are going to use not only OAuth 2 but also OpenID. 
+	- `accounts`: required to access accounts APIs
+	- `payments`: required to access payments APIs.
+	- `fundsconfirmations`: required to access confirmation of funds APIs.
   It's important to note that the requested scopes would be double checked by the SSA.
-* `redirect_uris`: Redirect URIs used during the security flow, which we will cover in the next article, you will see that the flow is based on what we call a redirection model flow. At some point, you will need to receive a callback, with the response from the bank. For this tutorial, we are going to use google.com. You will see that it's fine to use google for this tutorial, as we will manual extract the response from the parameters. 
+- `redirect_uris`: Redirect URIs used during the security flow, which we will cover in the next article, you will see that the flow is based on what we call a redirection model flow. At some point, you will need to receive a callback, with the response from the bank. For this tutorial, we are going to use google.com. You will see that it's fine to use google for this tutorial, as we will manual extract the response from the parameters. 
   An important things to note, that comes back to me regularly as a question, is if you happen to change your redirection Uris for a reason, you will need to update your OIDC client in each of the bank. What this means is that you will need to do the dynamic registration again with all the banks you already onboard. Fortunately there is a PUT method for the dynamic registration but still, if you are onboard with 1000 banks, it can be a long process.
   People usually things that by updating it in the directory, it's enough. It's the first step to do but unfortunately not sufficient. It will change the redirect Uris in your financial passport, which is necessary, but the banks are not aware of this change yet, until you do a PUT in the dynamic registration.
-* `software_statement`: this is where you copy-paste your SSA from the directory. The SSA is a JWS as well, it's a bit of a JWS inception we are doing here but note that the SSA is signed by the directory, and the dynamic registration JWS signed by you. If you think of it, it's a nice way to make sure you are authorised to register, certified by a central authority, the directory in our case, and also verifying your identity at the same time.
-* `token_endpoint_auth_method`: choose the authentication method to use with this bank. As mentioned in the previous section, this method needs to be supported by the bank first.
+- `software_statement`: this is where you copy-paste your SSA from the directory. The SSA is a JWS as well, it's a bit of a JWS inception we are doing here but note that the SSA is signed by the directory, and the dynamic registration JWS signed by you. If you think of it, it's a nice way to make sure you are authorised to register, certified by a central authority, the directory in our case, and also verifying your identity at the same time.
+- `token_endpoint_auth_method`: choose the authentication method to use with this bank. As mentioned in the previous section, this method needs to be supported by the bank first.
 
 ##### Getting your SSA
 
@@ -408,6 +415,7 @@ issuerId: 71a6b418-089b-47d7-ab31-703f7beca9fe
 ```
 
 As a result:
+
 ```
 eyJraWQiOiIzODhiNjJjOTBlNzAzMDg4MjQwNTQ1ZjM2ZmNmMTRkM2Q2N2EwMTliIiwiYWxnIjoiUFMyNTYifQ.eyJ0b2tlbl9lbmRwb2ludF9hdXRoX3NpZ25pbmdfYWxnIjoiUFMyNTYiLCJyZXF1ZXN0X29iamVjdF9lbmNyeXB0aW9uX2FsZyI6IlJTQS1PQUVQLTI1NiIsImdyYW50X3R5cGVzIjpbImF1dGhvcml6YXRpb25fY29kZSIsInJlZnJlc2hfdG9rZW4iLCJjbGllbnRfY3JlZGVudGlhbHMiXSwic3ViamVjdF90eXBlIjoicGFpcndpc2UiLCJpc3MiOiI3MDdlNjA4MS04YWMyLTQzYjgtOWE5Zi1mYTc1YmVlMjJkYzkiLCJyZWRpcmVjdF91cmlzIjpbImh0dHBzOlwvXC93d3cuZ29vZ2xlLmNvbSJdLCJ0b2tlbl9lbmRwb2ludF9hdXRoX21ldGhvZCI6InRsc19jbGllbnRfYXV0aCIsInNvZnR3YXJlX3N0YXRlbWVudCI6ImV5SnJhV1FpT2lJd1lUTmxOR0poWXpWbU1UZzJPVEZsTlRjeE5HSmtOak0yWldZNFl6aGpZV0kyTW1KbFkyUTNJaXdpWVd4bklqb2lVRk15TlRZaWZRLmV5SnZjbWRmYW5kcmMxOWxibVJ3YjJsdWRDSTZJbFJQUkU4aUxDSnpiMlowZDJGeVpWOXRiMlJsSWpvaVZFVlRWQ0lzSW5OdlpuUjNZWEpsWDNKbFpHbHlaV04wWDNWeWFYTWlPbHRkTENKdmNtZGZjM1JoZEhWeklqb2lRV04wYVhabElpd2ljMjltZEhkaGNtVmZZMnhwWlc1MFgyNWhiV1VpT2lKR2IzSlVaWE4wWHpjd04yVTJNRGd4TFRoaFl6SXRORE5pT0MwNVlUbG1MV1poTnpWaVpXVXlNbVJqT1NJc0luTnZablIzWVhKbFgyTnNhV1Z1ZEY5cFpDSTZJamN3TjJVMk1EZ3hMVGhoWXpJdE5ETmlPQzA1WVRsbUxXWmhOelZpWldVeU1tUmpPU0lzSW1semN5STZJa1p2Y21kbFVtOWpheUlzSW5OdlpuUjNZWEpsWDJwM2EzTmZaVzVrY0c5cGJuUWlPaUpvZEhSd2N6cGNMMXd2YzJWeWRtbGpaUzVrYVhKbFkzUnZjbmt1YjJJdVptOXlaMlZ5YjJOckxtWnBibUZ1WTJsaGJEbzBORE5jTDJGd2FWd3ZjMjltZEhkaGNtVXRjM1JoZEdWdFpXNTBYQzgzTURkbE5qQTRNUzA0WVdNeUxUUXpZamd0T1dFNVppMW1ZVGMxWW1WbE1qSmtZemxjTDJGd2NHeHBZMkYwYVc5dVhDOXFkMnRmZFhKcElpd2ljMjltZEhkaGNtVmZhV1FpT2lJM01EZGxOakE0TVMwNFlXTXlMVFF6WWpndE9XRTVaaTFtWVRjMVltVmxNakprWXpraUxDSnZjbWRmWTI5dWRHRmpkSE1pT2x0ZExDSnZZbDl5WldkcGMzUnllVjkwYjNNaU9pSm9kSFJ3Y3pwY0wxd3ZaR2x5WldOMGIzSjVMbTlpTG1admNtZGxjbTlqYXk1bWFXNWhibU5wWVd3Nk5EUXpYQzkwYjNOY0x5SXNJbTl5WjE5cFpDSTZJalZqTkRWbU9ESmtZVGt6WWpjMU1ERXlOV00zWVdSbFlpSXNJbk52Wm5SM1lYSmxYMnh2WjI5ZmRYSnBJam9pYUhSMGNITTZYQzljTDJrdWNHOXpkR2x0Wnk1alkxd3ZhSFJvVVVOS2FGSmNMMlp5TFd4dloyOHRjM0YxWVhKbExURmpMV0pzWVdOckxuQnVaeUlzSW5OdlpuUjNZWEpsWDJwM2EzTmZjbVYyYjJ0bFpGOWxibVJ3YjJsdWRDSTZJbFJQUkU4aUxDSnpiMlowZDJGeVpWOXliMnhsY3lJNld5SkRRbEJKU1NJc0lsQkpVMUFpTENKRVFWUkJJaXdpUVVsVFVDSmRMQ0psZUhBaU9qRTFOekk0T1RJeE5qY3NJbTl5WjE5dVlXMWxJam9pUm05eVoyVlNiMk5ySWl3aWIzSm5YMnAzYTNOZmNtVjJiMnRsWkY5bGJtUndiMmx1ZENJNklsUlBSRThpTENKcFlYUWlPakUxTnpJeU9EY3pOamNzSW1wMGFTSTZJamMzTURVNU5EVTVMVGhrT0RZdE5EQXlOUzA1Wm1JeUxXSXdNakU0TkRGbE16TmpNeUo5LmMwcHJ3YWlMR0R2VVhPNEtVMXpUS1pFT05kQ013Y1dfeFpOa18zcTg1OGV6YVp0cHc0QVpGRUVJQVVOUGNoODltMy1XNFhMOTVjTlJQdGt2S2tiLUFfaFg2M2ZmeUFXdTFabEhzempQRFdnNXRBSFEtZm9zeE1CZmNoRkpIdE14cDBGVkhOWTVCSHBNV0R0VkFvc1NSRThvV0dzZVdEZGxEUW5BLUk4T3BOcUpaTFRIQlpyUmg0WEtMWWY3SHNVU3VkRzdMQzhiQmVoN0NlVk1oU1ltRURaRWFqNTJ0NFcwODdrbk05bFI0R1c2SFlPWGI4VVlwc2xKcTVqVHpNMkhuVnhwWFVXeW9rYk15QkxzSVZzYU9jOEg3YlhJSDhqVmxRdTdZUVh1QjJNN3JpWHRnaE02YTZPSGdVSmNScmhrUU40Rlo0NkdyQTJCUDc5S2JwWGkwUSIsInNjb3BlIjoib3BlbmlkIGFjY291bnRzIHBheW1lbnRzIGZ1bmRzY29uZmlybWF0aW9ucyIsInJlcXVlc3Rfb2JqZWN0X3NpZ25pbmdfYWxnIjoiUFMyNTYiLCJleHAiOjE1NzI3ODg5NzIsInJlcXVlc3Rfb2JqZWN0X2VuY3J5cHRpb25fZW5jIjoiQTEyOENCQy1IUzI1NiIsImlhdCI6MTU3Mjc4ODY3MiwianRpIjoiODM5OGI5NzgtMTI3YS00ZjFlLWFiNzUtNmE0NzY2MTA3YTYzIiwicmVzcG9uc2VfdHlwZXMiOlsiY29kZSBpZF90b2tlbiJdLCJpZF90b2tlbl9zaWduZWRfcmVzcG9uc2VfYWxnIjoiUFMyNTYifQ.Uy5sOXSXCrkJ_n_wjU6YkdAYxZGPvJNncTGaUdskA7TlGOtUi1_n4VJvxycB_-1j43dagawbS5IQhA3dG_7yyVV4PguZdmnB31N5VOLnNv0QMevFdXLT_bIU904LYZSyBbPYAQZvtiAx8Fq4vPXdhbvpxt5T2quw5LHSlb3HStePb6S7t1KmZ3-UBecia5ZYDQ0r1XeJLwuGGZumFWZ6TmAc-A3MymVglf9Ks-w16-_ZB0QY0K1CpcKJHaM5JS70_wgcpwLy3ehE8BJlDzN-QOsTGQuf-E0c78-mA_xsHZFtG1U5IYStenOC995rxa7nnqh7PSn7noUqKkGCaOj6vg
 ```
@@ -430,6 +438,7 @@ eyJraWQiOiIzODhiNjJjOTBlNzAzMDg4MjQwNTQ1ZjM2ZmNmMTRkM2Q2N2EwMTliIiwiYWxnIjoiUFMy
   ```
 
 As a result:
+
 ```
 {
     "scopes": [
@@ -479,9 +488,10 @@ As a result:
 Important things to note is that, even if you requested some specific values for your OIDC client like `"token_endpoint_auth_method": "tls_client_auth"`, the specification says that the bank can override them if they want to. A bit annoying you may think but that's part of the game. It's always best to verify that it's not been the case. From a code point of view, store the response of the registration but not necessarily the request you did.
 
 The response is standardise, we will only cover the main one you should know about:
-* `client_id`: The one to not miss and store preciously somewhere. This client ID is the proof that you successfully registered and can use the bank APIs. The bank is going to request it in different places of the flow, it is best to keep it accessible easily. This client ID is also refer as the OIDC client ID. 
-* `redirect_uris`: remember that this is the list of redirect URIs that the bank will authorise to redirect to. If you need to change it, you need to do a PUT again.
-* `registration_access_token`: don't miss that one, it's important to store it somewhere precious too. It's the only time it will be returned to you so best not loosing it. It's mandatory for PUT/DELETE/GET your OIDC client information via the dynamic registration endpoint.  
+
+- `client_id`: The one to not miss and store preciously somewhere. This client ID is the proof that you successfully registered and can use the bank APIs. The bank is going to request it in different places of the flow, it is best to keep it accessible easily. This client ID is also refer as the OIDC client ID. 
+- `redirect_uris`: remember that this is the list of redirect URIs that the bank will authorise to redirect to. If you need to change it, you need to do a PUT again.
+- `registration_access_token`: don't miss that one, it's important to store it somewhere precious too. It's the only time it will be returned to you so best not loosing it. It's mandatory for PUT/DELETE/GET your OIDC client information via the dynamic registration endpoint.  
 
 
 ## Conclusion

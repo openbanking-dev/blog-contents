@@ -65,13 +65,13 @@ I will repeat this in due time, don't worry.
 From an API point of view, we are going to be more interested in knowing the different endpoints.
 Fortunately, you don't need to get them one by one, there are two endpoints dedicated into discovering the services.
 
+For the resource server APIs:
 ```
-For the resource server APIs
 https://rs.aspsp.ob.forgerock.financial/open-banking/discovery
 ```
 
+For the authorisation server APIs:
 ```
-For the authorisation server APIs
 https://as.aspsp.ob.forgerock.financial/oauth2/.well-known/openid-configuration
 ```
 

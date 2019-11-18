@@ -18,6 +18,7 @@ Those APIs will cover the access to all the user financial data.
 I usually compare them with my bank web portal. Basically, everything you can retrieve from your bank portal, you will _pretty much_ be able to access them via APIs.
 
 Here is the list of the APIs:
+
 - Get accounts
 - Get account
 - Get balances
@@ -38,6 +39,7 @@ Although for APIs like standing orders, you may have wish a way to create new on
 
 Before we got in the details of each APIs, let explain the concept of bulk.
 Some APIs will offer you two modes: Data for a specific account or for all accounts: the last one is called bulk. The easiest is to take an example, the `Get transactions`.
+
 - You can request the transactions for a specific account
 - You can request the transaction for all the accounts at the same time -> Bulk
 
@@ -1048,111 +1050,7 @@ POST /open-banking/v3.1.1/pisp/file-payment-consents/PDC_f85d8c8a-1fe5-4f7d-b8b6
 
 ### XML
 
-If you are an XML fan, you can send the same in XML:
-
-```
-POST /open-banking/v3.1.1/pisp/file-payment-consents/PDC_f85d8c8a-1fe5-4f7d-b8b6-1d7cc9ad6ef6/file
-
-<?xml version="1.0" encoding="UTF-8" ?>
-<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.08" xmlns:xsi="http://www.w3.org/2001/XMLSchema- instance">
-    <CstmrCdtTrfInitn>
-    <GrpHdr>
-        <MsgId>ABC/120928/CCT001</MsgId>
-        <CreDtTm>2012-09-28T14:07:00</CreDtTm>
-        <NbOfTxs>3</NbOfTxs>
-        <CtrlSum>11500000</CtrlSum>
-        <InitgPty>
-            <Nm>ABC Corporation</Nm>
-            <PstlAdr>
-                <StrtNm>Times Square</StrtNm>
-                <BldgNb>7</BldgNb>
-                <PstCd>NY 10036</PstCd>
-                <TwnNm>New York</TwnNm>
-                <Ctry>US</Ctry>
-            </PstlAdr>
-        </InitgPty>
-    </GrpHdr>
-    <PmtInf>
-        <PmtInfId>ABC/086</PmtInfId>
-        <PmtMtd>TRF</PmtMtd>
-        <BtchBookg>false</BtchBookg>
-        <ReqdExctnDt>
-            <Dt>2012-09-29</Dt>
-        </ReqdExctnDt>
-        <Dbtr>
-            <Nm>ABC Corporation</Nm>
-            <PstlAdr>
-                <StrtNm>Times Square</StrtNm>
-                <BldgNb>7</BldgNb>
-                <PstCd>NY 10036</PstCd>
-                <TwnNm>New York</TwnNm>
-                <Ctry>US</Ctry>
-            </PstlAdr>
-        </Dbtr>
-        <DbtrAcct>
-            <Id>
-                <Othr>
-                    <Id>00125574999</Id>
-                </Othr>
-            </Id>
-        </DbtrAcct>
-        <DbtrAgt>
-            <FinInstnId>
-                <BICFI>BBBBUS33</BICFI>
-            </FinInstnId>
-        </DbtrAgt>
-        <CdtTrfTxInf>
-            <PmtId>
-                <InstrId>ABC/120928/CCT001/01</InstrId>
-                <EndToEndId>ABC/4562/2012-09-08</EndToEndId>
-            </PmtId>
-            <Amt>
-                <InstdAmt Ccy="JPY">10000000</InstdAmt>
-            </Amt>
-            <ChrgBr>SHAR</ChrgBr>
-            <CdtrAgt>
-                <FinInstnId>
-                    <BICFI>AAAAGB2L</BICFI>
-                </FinInstnId>
-            </CdtrAgt>
-            <Cdtr>
-                <Nm>DEF Electronics</Nm>
-                <PstlAdr>
-                    <AdrLine>Corn Exchange 5th Floor</AdrLine>
-                    <AdrLine>Mark Lane 55</AdrLine>
-                    <AdrLine>EC3R7NE London</AdrLine>
-                    <AdrLine>GB</AdrLine>
-                </PstlAdr>
-            </Cdtr>
-            <CdtrAcct>
-                <Id>
-                    <Othr>
-                        <Id>23683707994125</Id>
-                    </Othr>
-                </Id>
-            </CdtrAcct>
-            <Purp>
-                <Cd>GDDS</Cd>
-            </Purp>
-            <RmtInf>
-                <Strd>
-                    <RfrdDocInf>
-                        <Tp>
-                            <CdOrPrtry>
-                                <Cd>CINV</Cd>
-                            </CdOrPrtry>
-                        </Tp>
-                        <Nb>4562</Nb>
-                        <RltdDt>2012-09-08</RltdDt>
-                    </RfrdDocInf>
-                </Strd>
-            </RmtInf>
-        </CdtTrfTxInf>
-    </PmtInf>
-</CstmrCdtTrfInitn>
-</Document>
-```
-
+If you are an XML fan, you can send the same in XML.
 
 ## Event notification
 

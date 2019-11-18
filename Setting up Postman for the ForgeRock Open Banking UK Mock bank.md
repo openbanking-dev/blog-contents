@@ -61,15 +61,16 @@ You probably used to the httpS, which basically means the server is presenting t
 MATLS is about doing the same but both side, meaning that you will also present a certificate to the server. This certificate is called client certificate.
 
 Postman supports providing client certificates but you need to configure it accordingly.
+
 1. Open `Preferences` > `Certificates`.
 2. In the `Client Certificates` section, click on `Add Certificate`.
 3. Complete the form:
-	4. `Host` : `https://*.ob.forgerock.financial`
-	5. `CRT file`: upload your transport key PEM file (.pem)
-	6. `KEY file`: upload your transport key private key file (.key)
-	7. Ignore `PFX file`
-	8. Ignore `Passphrase`
-	9. Click `add`
+	1. `Host` : `https://*.ob.forgerock.financial`
+	2. `CRT file`: upload your transport key PEM file (.pem)
+	3. `KEY file`: upload your transport key private key file (.key)
+	4. Ignore `PFX file`
+	5. Ignore `Passphrase`
+	6. Click `add`
 
 
 Your client certificate should be setup and send to every ForgeRock mock bank endpoint.

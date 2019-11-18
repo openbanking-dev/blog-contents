@@ -9,8 +9,8 @@ In this article, we will see how to consume the transactions APIs. If you haven'
 
 In order to access the user transactions, we need to create an account request with one of those two permissions:
 
-* `ReadTransactionsBasic`
-* `ReadTransactionsDetail`
+- `ReadTransactionsBasic`
+- `ReadTransactionsDetail`
 
 The difference is in the level of details. 
 
@@ -78,13 +78,14 @@ The same transaction but with `ReadTransactionsDetails`:
 
 
 You have to specify either or both `Credits` or `Debits` transactions, by using the permissions:
-* `ReadTransactionsCredits`
-* `ReadTransactionsDebits`
+
+- `ReadTransactionsCredits`
+- `ReadTransactionsDebits`
 
 In this article, we will show how to retrieve the transactions from a specific account and from a statement, therefore we need to ask the user the permissions for accounts and statements access:
 
-* `ReadAccountsBasic`
-* `ReadStatementsBasic`
+- `ReadAccountsBasic`
+- `ReadStatementsBasic`
 
 At the end, our account consent access request will be:
 
@@ -125,6 +126,7 @@ Accept: application/json
 ```
 
 As a response:
+
 ```
 {
     "Data": {
@@ -205,6 +207,7 @@ Accept: application/json
 ```
 
 As a response:
+
 ```
 {
     "Data": {
@@ -280,6 +283,7 @@ x-fapi-customer-ip-address: 104.25.212.99
 x-fapi-interaction-id: 93bac548-d2de-4546-b106-880a5018460d
 Accept: application/json
 ```
+
 As a response:
 
 ```

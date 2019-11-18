@@ -1,6 +1,6 @@
-# Open Banking UK trusting model and how to register yourself
+# Open Banking UK trusting model
 
-*This article is part of a set of tutorial about Open Banking UK.If you are interested to learn about Open Banking UK, you may want to check-out first our intro article.*
+*This article is part of a set of tutorial about Open Banking UK. If you are interested to learn about Open Banking UK, you may want to check-out first our intro article.*
 
 For security reason, you can imagine you would need to be authorise before consuming those APIs, especially payments.
 
@@ -12,6 +12,7 @@ That would be a major bummer and would make your dream to integrate with 100 ban
 The way it works is based on certificates and JWTs, but I come back on that. First, let's see how it works in general.
 
 There is two parallel trusting model:
+
 * A central one, based on what we call an Open Banking UK directory.
 * A certificate based model called EIDAS
 
