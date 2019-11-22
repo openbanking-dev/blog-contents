@@ -33,16 +33,22 @@ A recurring payment made by the user. The payment is made up with a first paymen
 
 So before describing how we go about making a payment, let's see an example. In this example we'll use Alice who wants to buy a raspberry pi from a shop.
 
+Here you see the the different steps in making a payment. We'll break this down into digestible steps.
+
+![Overview](https://i.imgur.com/STkVBPs.png)
+
 1. Alice is shopping on a tech website and decides she wants to buy a raspberry pi, so she adds it to her basket and checks out.
+  ![Alice buying raspberry pi](https://i.imgur.com/F8cvXrV.png)
 2. The shop creates initiates the payment by creating a payment request or consent in other words.
 3. After creating the consent, the shop redirects Alice to her bank.
-  ![Consent](https://i.imgur.com/K3iWGtr.png)
 4. Alice will login to her bank, review payment and approve it.
+  ![Consent](https://i.imgur.com/aXtdd4f.png)
 5. Alice is redirected back to the shop with an exchange code
+  ![Redirect](https://i.imgur.com/FSYgGFV.png)
 6. The shop uses the exchange code to get an access token
+  ![Code Exchange](https://i.imgur.com/omKvjCH.png)
 7. The shop will submit the payment
-  
-  ![Submit Payment](https://i.imgur.com/7mEaouy.png)
+  ![Payment](https://i.imgur.com/12lXY3H.png)
   
 ### Pre-requistes
 To become a payment initiation services (PISPs) which is required to be able to make payments you need to have some capital behind you which might not be realistic for a developer just starting off with a cool idea. No need to worry as we can use the [Forgerock Reference Implementation Sandbox](https://openbanking4.dev/open-banking-uk-tutorials-menu/) to get going.
