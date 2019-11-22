@@ -367,4 +367,4 @@ It's not very effective to keep polling an API for an indefinite amount of time 
 ## Conclusion
 It's not so trivial to become a PISP but given we can use the sandbox we can still innovate before officially becoming a PISP. There are many different types of payments you can make but the flow for all of them are very similar once you understand the flow it's only a matter of changing the payload and the URL and you can fully leverage the power of being a PISP.
 
-[Payment](https://i.imgur.com/nqphqTK.gifv)
+![Payment](https://i.imgur.com/nqphqTK.gifv)
